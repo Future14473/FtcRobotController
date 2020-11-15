@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Linear Opmode")
@@ -38,27 +39,48 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TeleOp extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
-    Mecanum Motors = new Mecanum();
+    private DcMotorEx intake;
+    private DcMotorEx rightDrive;
+    Mecanum_InProgress Motors = new Mecanum_InProgress();
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        Mecanum Motors = new Mecanum(hardwareMap);
+        Mecanum_InProgress Motors = new Mecanum_InProgress(hardwareMap);
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
-
+            //DrivetrainBaseController
             double forward = gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double turn  =  gamepad1.right_stick_x;
             Motors.move(forward, strafe, turn);
+            //FastModeBaseController
+            if(gamepad1.right_trigger == 2){
+                Motors.frontRight.setVelocity(Motors.frontRightPower*10000);
+                Motors.frontLeft.setVelocity(Motors.frontLeftPower*10000);
+                Motors.backRight.setVelocity(Motors.backRightPower*10000);
+                Motors.backLeft.setVelocity(Motors.backLeftPower*10000);
+            }
+            //SlowModeBaseController
+            if(gamepad1.left_trigger == 2){
+                Motors.frontRight.setVelocity(Motors.frontRightPower/25);
+                Motors.frontLeft.setVelocity(Motors.frontLeftPower/25);
+                Motors.backRight.setVelocity(Motors.backRightPower/25);
+                Motors.backLeft.setVelocity(Motors.backLeftPower/25);
+            }
+            //IntakeAttachmentsController
+            if(gamepad2.a){
+                intake.setVelocity(100);
+            }else{
+                intake.setVelocity(0);
+            }
+            //
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", Motors.topLeftPower, Motors.topRightPower, Motors.bottomLeftPower, Motors.bottomRightPower);
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)");
             telemetry.update();
         }
     }

@@ -58,7 +58,7 @@ public class Mecanum_Drivetrain_Auto_OpMode extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
-    Mecanum Motors = new Mecanum();
+    Mecanum_InProgress Motors = new Mecanum_InProgress();
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -66,7 +66,7 @@ public class Mecanum_Drivetrain_Auto_OpMode extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Status", "Initialized");
-        Mecanum Motors = new Mecanum(hardwareMap);
+        Mecanum_InProgress Motors = new Mecanum_InProgress(hardwareMap);
 
 
     }
