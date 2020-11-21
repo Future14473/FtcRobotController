@@ -87,8 +87,7 @@ public class Detection extends OpenCvPipeline {
         Mat copy = copyHSV(input);
         ArrayList<Integer> values = new ArrayList<>();
         ArrayList<Integer> saturations = new ArrayList<>();
-        int area = input.height() * input.width()/16;
-        for(int y = 0; y < input.height(); y+=3){
+        for(int y = 0; y < input.height(); y+=10){
             for(int x = 0; x < input.width(); x+=3){
                 values.add((Integer)(int)copy.get(y, x)[2]);
                 saturations.add((Integer)(int)copy.get(y, x)[1]);
@@ -151,8 +150,8 @@ public class Detection extends OpenCvPipeline {
             double r = (double) rect.height/rect.width;
             return ((r > DMAXR) || (r < DMINR) || (rect.width < main.width * 0.82));
         });
-
-        for(MatOfPoint contour: contours){
+        for(int i = 0; i<contours.size();i++){
+            MatOfPoint contour = contours.get(i);
             Rect rect = Imgproc.boundingRect(contour);
             Imgproc.rectangle(input, rect.tl(), rect.br(), new Scalar(0, 255, 255), 2);
             output.add(rect);
@@ -196,7 +195,8 @@ public class Detection extends OpenCvPipeline {
         ArrayList<double[]> rectsData= new ArrayList<>();
 
         //sorting "rings" into stacks
-        for(MatOfPoint contour:contours){
+        for(int i = 0; i<contours.size();i++){
+            MatOfPoint contour = contours.get(i);
             Rect rect = Imgproc.boundingRect(contour);
             int newX = (int)Math.max(rect.x - (rect.width*0.3), 0);
             int newY = (int)Math.max(rect.y - (rect.height*0.1), 0);
@@ -204,7 +204,8 @@ public class Detection extends OpenCvPipeline {
             int newH = (int)Math.min((rect.height*1.1) + rect.y, input.height()) - newY;
             submat = new Mat(input.clone(), new Rect(newX, newY, newW, newH));
             ArrayList<Rect> moreRects = find_subcontours(submat, rect);
-            for(Rect subrect: moreRects){
+            for(int j = 0; j< moreRects.size();j++){
+            Rect subrect = moreRects.get(j);
                 double epsilonW = rect.width * 0.3;
                 double epsilonH = rect.height * 0.3;
                 subrect.x += newX;
@@ -290,7 +291,8 @@ public class Detection extends OpenCvPipeline {
 
         MatOfPoint max = new MatOfPoint();
         double area = -1;
-        for(MatOfPoint contour: contours){
+        for(int i = 0; i<contours.size();i++){
+            MatOfPoint contour = contours.get(i);
             if(contourArea(contour) > area){
                 area = contourArea(contour);
                 max = contour;
@@ -345,7 +347,8 @@ public class Detection extends OpenCvPipeline {
 
     public Mat markRings(Mat input, ArrayList<double[]> rectsData){
         Mat copy = input.clone();
-        for(double[] data: rectsData){
+        for(int i = 0; i < rectsData.size(); i++){
+        double[] data = rectsData.get(i);
             if(data[0] > 0){
                 Rect rect = new Rect((int) data[1], (int) data[4], (int) data[2], (int) (data[3] - data[4]));
                 double Angle = find_Angle(rect);
