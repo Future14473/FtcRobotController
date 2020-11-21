@@ -41,6 +41,7 @@ public class Detection extends OpenCvPipeline {
     int wobbleIterations = 100;
 
     Mat formatted = new Mat();
+    Mat resized = new Mat();
     Mat recolored = new Mat();
     Mat threshold = new Mat();
     Mat subthreshold = new Mat();
@@ -49,19 +50,26 @@ public class Detection extends OpenCvPipeline {
     int saturation = 0;
 
     Telemetry telemetry;
+    Odometry odometry;
     Mat output;
 
-    public Detection(Telemetry t){
-        telemetry = t;
+    public Detection(Telemetry t, Odometry odometry){
+        this.telemetry = t;
+        this.odometry = odometry;
     }
 
     @Override
     public Mat processFrame(Mat input){
         formatted = picSetup(input);
+        resized = picSetupNoFlip(input);
+
         if(wobbleIterations < 0){
             return formatted;
         }
-        output = markWobble(formatted, find_wobble(formatted, "blue"));
+        Mat threshold = new Mat();
+        output = find_blues(formatted);
+
+        //output = markWobble(formatted, find_wobble(resized, "blue"));
         wobbleIterations--;
         return output;
     }
@@ -78,6 +86,13 @@ public class Detection extends OpenCvPipeline {
         return resized;
     }
 
+    public Mat picSetupNoFlip(Mat input) {
+        Mat resized = new Mat();
+        double scale = 960.0/input.height();
+        Imgproc.resize(input, resized, new Size(Math.round(input.width() * scale), Math.round(input.height() * scale)));
+        recolored.release();
+        return resized;
+    }
     public Mat copyHSV(Mat input){
         cvtColor(input, recolored, COLOR_BGR2HSV);
         return recolored;
@@ -87,7 +102,7 @@ public class Detection extends OpenCvPipeline {
         Mat copy = copyHSV(input);
         ArrayList<Integer> values = new ArrayList<>();
         ArrayList<Integer> saturations = new ArrayList<>();
-        for(int y = 0; y < input.height(); y+=10){
+        for(int y = 0; y < input.height(); y+=15){
             for(int x = 0; x < input.width(); x+=3){
                 values.add((Integer)(int)copy.get(y, x)[2]);
                 saturations.add((Integer)(int)copy.get(y, x)[1]);
@@ -276,7 +291,7 @@ public class Detection extends OpenCvPipeline {
         else{
             System.out.println("ERROR: Not a valid side.");
         }
-        Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(7, 7));
+        Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(15, 15));
         Mat kernelE = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(CURVE_EXTENSION, 1));
         Imgproc.dilate(threshold, threshold, kernel);
         Imgproc.erode(threshold, threshold, kernelE);
@@ -371,7 +386,7 @@ public class Detection extends OpenCvPipeline {
         return copy;
     }
 
-    public Point locateObj(Rect rect, Odometry odometry){
+    public Point locateObj(Rect rect){
         Point rel = find_Point(rect);
         int dx = (int)rel.x;
         int dy = (int)rel.y;
