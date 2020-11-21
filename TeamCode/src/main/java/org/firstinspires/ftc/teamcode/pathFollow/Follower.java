@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 public class Follower {
-//    double closeEnoughDistance = Math.PI/3; // originally Math.Pi/5
-//    double closeEnoughAngle = 40;// originallly 30
 
     double closeEnoughDistance = 10;
     double closeEnoughAngle = Math.PI/5;
@@ -49,16 +47,13 @@ public class Follower {
         this.telemetry = telemetry;
         this.pathFile = pathFile;
 
-//        loop = new Thread(() -> {
+        loop = new Thread(() -> {
 
             Path path = ImportPath.getPath(pathFile);
 
 
             //index of current target point
             int i = 0;
-             telemetry.addData("I am running in the loop thread ", "yes I am");
-//            muthaloop:
-
             while (i < path.size() && running) {
                 telemetry.addData("In the loop", "mutha loop");
 
@@ -76,10 +71,9 @@ public class Follower {
                 double angleToLast = Math.abs(RotationUtil.turnLeftOrRight(position.r, path.get(path.size() - 1).dir, Math.PI / 2));
 
                 if (distToLast < closeEnoughDistance && angleToLast < closeEnoughAngle) {
-//                    if last point is reached, end
+                    // if last point is reached, end
                     break;
                 }
-
 
                 //move robot towards i
                 PathPoint target = path.get(i);
@@ -109,7 +103,7 @@ public class Follower {
             drivetrain.drive(0, 0, 0);
             telemetry.addData("Done with path", "done");
             telemetry.update();
-//        });
+        });
     }
 
     public void start(){
@@ -120,5 +114,4 @@ public class Follower {
         running = false;
 
     }
-
 }
