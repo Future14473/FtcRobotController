@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
+package org.firstinspires.ftc.teamcode.opModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -63,12 +63,14 @@ public class OdoSingleWheelTest extends OpMode
         odowheel2.getDeltaPosition();
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Motor type", type);
-        telemetry.addData("Status", "WheelHoriz Position: " + String.format("%d", wheel.getCurrentPosition()));
-        telemetry.addData("Status", "WheelHoriz Distance: " + String.format("%.1f", odowheel.totalDistTravelled));
-
-        telemetry.addData("Status", "WheelVert Position: " + String.format("%d", wheel2.getCurrentPosition()));
-        telemetry.addData("Status", "WheelVert Distance: " + String.format("%.1f", odowheel2.totalDistTravelled));
+        telemetry.addData("Wheel Position 1: ", wheel.getCurrentPosition());
+        telemetry.addData("Wheel Position 2: ", wheel2.getCurrentPosition());
+//        telemetry.addData("Motor type", type);
+//        telemetry.addData("Status", "WheelHoriz Position: " + String.format("%d", wheel.getCurrentPosition()));
+//        telemetry.addData("Status", "WheelHoriz Distance: " + String.format("%.1f", odowheel.totalDistTravelled));
+//
+//        telemetry.addData("Status", "WheelVert Position: " + String.format("%d", wheel2.getCurrentPosition()));
+//        telemetry.addData("Status", "WheelVert Distance: " + String.format("%.1f", odowheel2.totalDistTravelled));
 
         /*//did it update?
         if(wheel.getCurrentPosition() == prevDist){//no
