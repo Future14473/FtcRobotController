@@ -61,7 +61,7 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
         DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
 //        DcMotor vertical = hardwareMap.get(DcMotor.class, "vertical");
-        DcMotor horizontal = hardwareMap.get(DcMotor.class, "horizontal");
+        DcMotor horizontal = hardwareMap.get(DcMotor.class, "shooter");
 
 
         //odometry wheels
@@ -82,6 +82,6 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
 
         // odometry system
         pose initial = new pose(0,0,Math.PI/2);
-        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels);
+        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
     }
 }
