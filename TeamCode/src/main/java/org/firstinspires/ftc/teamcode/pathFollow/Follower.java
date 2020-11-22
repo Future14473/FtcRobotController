@@ -28,6 +28,7 @@ public class Follower {
     String pathFile;
     Thread loop = new Thread(() -> {
 
+
         Path path = ImportPath.getPath(pathFile);
 
         //index of current target point

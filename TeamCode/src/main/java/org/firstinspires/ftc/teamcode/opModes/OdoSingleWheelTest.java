@@ -26,11 +26,11 @@ public class OdoSingleWheelTest extends OpMode
 
     @Override
     public void init() {
-        wheel = hardwareMap.get(DcMotor.class, "intake");
-        wheel2 = hardwareMap.get(DcMotor.class, "frontLeft" +
-                "");
+        wheel = hardwareMap.get(DcMotor.class, "shooter");
+//        wheel2 = hardwareMap.get(DcMotor.class, "frontLeft" +
+//                "");
         odowheel = new FreeSpinOdoWheel(new pose(0,0,0), wheel);
-        odowheel2 = new FreeSpinOdoWheel(new pose(0,0,0), wheel2);
+//        odowheel2 = new FreeSpinOdoWheel(new pose(0,0,0), wheel2);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -46,7 +46,8 @@ public class OdoSingleWheelTest extends OpMode
      */
     @Override
     public void start() {
-
+        wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /*
@@ -60,8 +61,8 @@ public class OdoSingleWheelTest extends OpMode
 
         odowheel.updateDelta();
         odowheel.getDeltaPosition();
-        odowheel2.updateDelta();
-        odowheel2.getDeltaPosition();
+//        odowheel2.updateDelta();
+//        odowheel2.getDeltaPosition();
 
         // Show the elapsed game time and wheel power.
 //        telemetry.addData("Wheel Position 1: ", wheel.getCurrentPosition());
@@ -70,8 +71,8 @@ public class OdoSingleWheelTest extends OpMode
         telemetry.addData("Status", "WheelHoriz Position: " + String.format("%d", wheel.getCurrentPosition()));
         telemetry.addData("Status", "WheelHoriz Distance: " + String.format("%.1f", odowheel.totalDistTravelled));
 
-        telemetry.addData("Status", "WheelVert Position: " + String.format("%d", wheel2.getCurrentPosition()));
-        telemetry.addData("Status", "WheelVert Distance: " + String.format("%.1f", odowheel2.totalDistTravelled));
+//        telemetry.addData("Status", "WheelVert Position: " + String.format("%d", wheel2.getCurrentPosition()));
+//        telemetry.addData("Status", "WheelVert Distance: " + String.format("%.1f", odowheel2.totalDistTravelled));
 
         /*//did it update?
         if(wheel.getCurrentPosition() == prevDist){//no

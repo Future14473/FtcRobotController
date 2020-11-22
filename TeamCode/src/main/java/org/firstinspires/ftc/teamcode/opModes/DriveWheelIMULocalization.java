@@ -25,6 +25,10 @@ public class DriveWheelIMULocalization extends LinearOpMode {
     IMU imu;
     Odometry odometry;
     DcMotor horizontal;
+    DcMotor frontLeft;
+    DcMotor frontRight;
+    DcMotor backRight;
+    DcMotor backLeft;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,11 +39,17 @@ public class DriveWheelIMULocalization extends LinearOpMode {
         waitForStart();
 
         odometry.start();
-
+        odometry.overridePosition(new pose(0,0,0));
         while (opModeIsActive()){
             telemetry.addData("IMU Position", imu.getHeading());
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.addData("Odometry Wheel Tick: ", horizontal.getCurrentPosition());
+
+            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
+            telemetry.addData("frontRight", frontRight.getCurrentPosition());
+            telemetry.addData("backRight", backRight.getCurrentPosition());
+            telemetry.addData("backLeft", backLeft.getCurrentPosition());
+
             telemetry.update();
 
             mecanum.drive(gamepad1.right_stick_x/3, -gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
@@ -50,10 +60,10 @@ public class DriveWheelIMULocalization extends LinearOpMode {
 
     Odometry defaultConfiguration(){
         //physical wheels
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
-        DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+         backRight = hardwareMap.get(DcMotor.class, "backRight");
+         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
 //        DcMotor vertical = hardwareMap.get(DcMotor.class, "vertical");
         horizontal = hardwareMap.get(DcMotor.class, "shooter");
 
