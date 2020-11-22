@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 public class DriveWheelOdometryWheel extends OdometryWheel{
     DcMotor wheel;
 
+
     double ticksPerRev() {return 386;}
     double radius (){ return  5;} //Centimeters
 

@@ -22,7 +22,11 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;
-    volatile boolean running = false;
+    DcMotor frontLeft;
+    DcMotor frontRight;
+    DcMotor backRight;
+    DcMotor backLeft;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,6 +47,10 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
             //telemetry.update();
 
             //mecanum.drive(gamepad1.right_stick_x/3, gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
+            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
+            telemetry.addData("frontRight", frontRight.getCurrentPosition());
+            telemetry.addData("backRight", backRight.getCurrentPosition());
+            telemetry.addData("backLeft", backLeft.getCurrentPosition());
         }
 
         f.stop();
@@ -52,10 +60,10 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
 
     Odometry defaultConfiguration(){
         //physical wheels
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
-        DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+         backRight = hardwareMap.get(DcMotor.class, "backRight");
+         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
 //        DcMotor vertical = hardwareMap.get(DcMotor.class, "vertical");
 //        DcMotor horizontal = hardwareMap.get(DcMotor.class, "intake");
 
