@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "Ring Detection", group = "Auto")
+@Autonomous(name = "can test Detection", group = "Auto")
 public class CamTest extends LinearOpMode {
     RingDetection detector;
     int cameraMonitorViewId;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
@@ -9,6 +10,8 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 import java.util.List;
 
 public class OdometryThatusesIMUforHeading extends Odometry implements GivesPosition {
+
+    Telemetry telemetry;
 
     IMU imu;
     double prevAngle = 0;
@@ -30,8 +33,9 @@ public class OdometryThatusesIMUforHeading extends Odometry implements GivesPosi
         position.translateRelative(curved);
     }
 
-    public OdometryThatusesIMUforHeading(IMU imu, pose initial, List<OdometryWheel> wheels) {
+    public OdometryThatusesIMUforHeading(IMU imu, pose initial, List<OdometryWheel> wheels, Telemetry telemetry) {
         super(initial, wheels);
         this.imu = imu;
+        this.telemetry = telemetry;
     }
 }

@@ -66,7 +66,8 @@ public class Odometry implements GivesPosition {
                     wheel.getDeltaPosition(), facingForward));
 
         //average horizontal translation
-        double horoTransNet = average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
+        double horoTransNet =
+        average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
             wheel.distanceTraveledTowardsAngle(
                     wheel.getDeltaPosition(), facingRight));
 

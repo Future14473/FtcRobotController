@@ -41,7 +41,6 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
 
 
         while (opModeIsActive()){
-            telemetry.addData("IMU Position", imu.getPosition());
 //            telemetry.addData("Odo intial pose")
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.update();
@@ -82,6 +81,6 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
 
         // odometry system
         pose initial = new pose(0,0,Math.PI/2);
-        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels);
+        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
     }
 }

@@ -6,10 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.DriveWheelOdometryWheel;
-import org.firstinspires.ftc.teamcode.odometry.Odometry;
-import org.firstinspires.ftc.teamcode.odometry.OdometryThatusesIMUforHeading;
-import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.*;
 import org.firstinspires.ftc.teamcode.pathFollow.Follower;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 import org.firstinspires.ftc.teamcode.utility.point;
@@ -32,31 +29,25 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
         odometry = defaultConfiguration();
-        Follower f = null;
+        Follower f = new Follower(mecanum, odometry, telemetry);
+
         waitForStart();
 
         odometry.start();
+        f.start();
 
-//        new Thread(() -> {
-//            telemetry.addData("running", "yes");
-//            telemetry.update();
-//            Follower f = new Follower(mecanum, odometry, telemetry);
-//        }).start();
-
-//        f.start();
         while (opModeIsActive()){
-            f = new Follower(mecanum, odometry, telemetry);
-            telemetry.addData("IMU Position", imu.getPosition());
-            telemetry.addData("Odometry Position", odometry.getPosition());
-            telemetry.update();
+
+            //telemetry.addData("IMU Position", imu.getPosition());
+            //telemetry.addData("Odometry Position", odometry.getPosition());
+            //telemetry.update();
 
             //mecanum.drive(gamepad1.right_stick_x/3, gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
         }
 
-//        f.stop();
-        odometry.end();
-        assert f != null;
         f.stop();
+        odometry.end();
+
     }
 
     Odometry defaultConfiguration(){
@@ -65,21 +56,27 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+//        DcMotor vertical = hardwareMap.get(DcMotor.class, "vertical");
+        DcMotor horizontal = hardwareMap.get(DcMotor.class, "intake");
 
         //odometry wheels
         OdometryWheel frontRightOdo = new DriveWheelOdometryWheel(new pose(178.5,168,Math.PI/2), frontRight);
         OdometryWheel frontLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,168,Math.PI/2), frontLeft);
         OdometryWheel backRightOdo = new DriveWheelOdometryWheel(new pose(178.5,-168,Math.PI/2), backRight);
         OdometryWheel backLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,-168,Math.PI/2), backLeft);
+//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
+        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,  Math.PI), horizontal);
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
         odometryWheels.add(frontLeftOdo);
         odometryWheels.add(frontRightOdo);
         odometryWheels.add(backLeftOdo);
         odometryWheels.add(backRightOdo);
+//        odometryWheels.add(verticalOdo);
+        //odometryWheels.add(horizontalOdo);
 
         // odometry system
         pose initial = new pose(0,0,Math.PI/2);
-        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels);
+        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
     }
 }
