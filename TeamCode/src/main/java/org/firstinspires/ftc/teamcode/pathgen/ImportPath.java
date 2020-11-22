@@ -12,7 +12,7 @@ public class ImportPath {
         point.speed = 0.3;
         point.dir = 0;//Math.PI/2;
 
-        PathPoint point2 = new PathPoint(0,-21);
+        PathPoint point2 = new PathPoint(0,-30);
         point2.speed = 0.3;
         point2.dir = Math.PI;
 
