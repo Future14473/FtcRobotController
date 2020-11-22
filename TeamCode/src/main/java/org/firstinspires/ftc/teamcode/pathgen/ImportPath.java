@@ -14,10 +14,15 @@ public class ImportPath {
 
         PathPoint point2 = new PathPoint(0,60);
         point2.speed = 0.3;
+        point2.dir = -Math.PI/2;
+
+        PathPoint point3 = new PathPoint(0,30);
+        point2.speed = 0.3;
         point2.dir = Math.PI;
 
         ret.add(point);
         ret.add(point2);
+        ret.add(point3);
 
         return ret;
 
