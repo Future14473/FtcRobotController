@@ -67,7 +67,7 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
 //        DcMotor vertical = hardwareMap.get(DcMotor.class, "vertical");
 //        DcMotor horizontal = hardwareMap.get(DcMotor.class, "intake");
 
-        //odometry wheels
+        //odometry wheels, kinda wierd
         OdometryWheel frontRightOdo = new DriveWheelOdometryWheel(new pose(178.5,168,Math.PI/2), frontRight);
         OdometryWheel frontLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,168,Math.PI/2), frontLeft);
         OdometryWheel backRightOdo = new DriveWheelOdometryWheel(new pose(178.5,-168,Math.PI/2), backRight);
