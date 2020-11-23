@@ -8,8 +8,8 @@ public class FrictionFreeSpinOdoWheel extends OdometryWheel{
     DcMotor wheel;
 
     // Ticks per rev values
-
-    double ticksPerRev() {return 4005;}
+    //2408, 2450,2483
+    double ticksPerRev() {return 2447;}
 
     // Distance values aka circumfrence
     // Circumfrence = 12cm, Radius = 1.9cm
