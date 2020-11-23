@@ -19,8 +19,8 @@ import java.util.List;
 
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
-@TeleOp(name="Working DriveWheel + IMU Localization", group="Autonomous")
-public class DriveWheelIMULocalization extends LinearOpMode {
+@TeleOp(name="Full Odo + IMU Localization", group="Autonomous")
+public class Localization extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;
@@ -41,9 +41,7 @@ public class DriveWheelIMULocalization extends LinearOpMode {
         odometry.start();
         odometry.overridePosition(new pose(0,0,0));
         while (opModeIsActive()){
-            telemetry.addData("IMU Position", imu.getHeading());
             telemetry.addData("Odometry Position", odometry.getPosition());
-            telemetry.addData("Odometry Wheel Tick: ", horizontal.getCurrentPosition());
 
 //            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
 //            telemetry.addData("frontRight", frontRight.getCurrentPosition());
@@ -52,7 +50,15 @@ public class DriveWheelIMULocalization extends LinearOpMode {
 
             telemetry.update();
 
-            mecanum.drive(gamepad1.right_stick_x/3, -gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
+            double targetDir = -Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x) - Math.PI/2;
+            double magnitude = Math.hypot(gamepad1.left_stick_y,gamepad1.left_stick_x);
+            double turnPwr = - RotationUtil.turnLeftOrRight(odometry.getPosition().r, targetDir, Math.PI * 2);
+
+            telemetry.addData("Intended dir", targetDir);
+            telemetry.addData("pwr", turnPwr);
+
+            mecanum.drive(gamepad1.right_stick_x/3, -gamepad1.right_stick_y/3,
+                    (magnitude > 0.5 && Math.abs(turnPwr) > 0.08)? -turnPwr:0);
         }
 
         odometry.end();
@@ -70,10 +76,10 @@ public class DriveWheelIMULocalization extends LinearOpMode {
         horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //odometry wheels
-        OdometryWheel frontRightOdo = new DriveWheelOdometryWheel(new pose(178.5,168,0), frontRight);
-        OdometryWheel frontLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,168,0), frontLeft);
-        OdometryWheel backRightOdo = new DriveWheelOdometryWheel(new pose(178.5,-168,0), backRight);
-        OdometryWheel backLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,-168,0), backLeft);
+        OdometryWheel frontRightOdo = new DriveWheelOdometryWheel(new pose(178.5,168,Math.PI), frontRight);
+        OdometryWheel frontLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,168,Math.PI), frontLeft);
+        OdometryWheel backRightOdo = new DriveWheelOdometryWheel(new pose(178.5,-168,Math.PI), backRight);
+        OdometryWheel backLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,-168,Math.PI), backLeft);
 //        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
         OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,Math.PI/2), horizontal);
 
