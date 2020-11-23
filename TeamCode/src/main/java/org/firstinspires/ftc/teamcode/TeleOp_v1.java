@@ -54,8 +54,9 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="TeleOp", group="Linear Opmode")
-@Disabled
-public class TeleOp_v1 extends LinearOpMode {
+
+
+ public class TeleOp_v1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -63,7 +64,7 @@ public class TeleOp_v1 extends LinearOpMode {
     private DcMotorEx taco;
     private DcMotorEx shooter;
     private  DcMotorEx shooter_adjust;
-    private Servo wobble;
+//    private Servo wobble;
     Mecanum Motors;
 
     @Override
@@ -78,17 +79,17 @@ public class TeleOp_v1 extends LinearOpMode {
         taco = hardwareMap.get(DcMotorEx.class, "taco");
         shooter  = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter_adjust  = hardwareMap.get(DcMotorEx.class, "shooter_adjuster");
-        wobble = hardwareMap.get(Servo.class, "wobble");
+//        wobble = hardwareMap.get(Servo.class, "wobble");
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             Mecanum Motors = new Mecanum(hardwareMap);
-            double forward = -gamepad1.right_stick_y;
+            double forward = gamepad1.right_stick_y;
             double strafe = gamepad1.right_stick_x;
             double turn = gamepad1.left_stick_x;
-            Motors.drive(strafe, forward, turn);
+            Motors.drive(strafe/2, forward/2, turn/2);
 
             if(gamepad1.right_bumper){
                 Motors.backRight.setVelocity(Motors.backRight.getVelocity()*10000);
@@ -105,7 +106,7 @@ public class TeleOp_v1 extends LinearOpMode {
             }
 
             if(gamepad2.a){
-                intake.setVelocity(10000);
+                intake.setVelocity(-10000);
             }else{
                 intake.setVelocity(0);
             }
@@ -122,13 +123,19 @@ public class TeleOp_v1 extends LinearOpMode {
                 shooter.setVelocity(0);
             }
 
+//            if(gamepad2.y){
+//                wobble.setPosition(1);
+//            }else{
+//                wobble.setPosition(0);
+//            }
+
             if(gamepad2.y){
-                wobble.setPosition(1);
+                intake.setVelocity(1000);
             }else{
-                wobble.setPosition(0);
+                intake.setVelocity(0);
             }
 
-            double angle = -gamepad2.left_stick_y;]
+            double angle = -gamepad2.left_stick_y;
             shooter_adjust.setVelocity(angle);
 
 
