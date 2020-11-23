@@ -29,58 +29,110 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Linear Opmode")
-//@Disabled
-public class TeleOp extends LinearOpMode {
 
+/**
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
+ *
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * It includes all the skeletal structure that all linear OpModes contain.
+ *
+ * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ */
+
+@TeleOp(name="TeleOp", group="Linear Opmode")
+@Disabled
+public class TeleOp_v1 extends LinearOpMode {
+
+    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx intake;
-    private DcMotorEx rightDrive;
-    Mecanum_InProgress Motors = new Mecanum_InProgress();
+    private DcMotorEx taco;
+    private DcMotorEx shooter;
+    private  DcMotorEx shooter_adjust;
+    private Servo wobble;
+    Mecanum Motors;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        Mecanum_InProgress Motors = new Mecanum_InProgress(hardwareMap);
 
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        intake  = hardwareMap.get(DcMotorEx.class, "intake");
+        taco = hardwareMap.get(DcMotorEx.class, "taco");
+        shooter  = hardwareMap.get(DcMotorEx.class, "shooter");
+        shooter_adjust  = hardwareMap.get(DcMotorEx.class, "shooter_adjuster");
+        wobble = hardwareMap.get(Servo.class, "wobble");
         waitForStart();
         runtime.reset();
 
+        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //DrivetrainBaseController
-            double forward = gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn  =  gamepad1.right_stick_x;
-            Motors.move(forward, strafe, turn);
-            //FastModeBaseController
-            if(gamepad1.right_trigger == 2){
-                Motors.frontRight.setVelocity(Motors.frontRightPower*10000);
-                Motors.frontLeft.setVelocity(Motors.frontLeftPower*10000);
-                Motors.backRight.setVelocity(Motors.backRightPower*10000);
-                Motors.backLeft.setVelocity(Motors.backLeftPower*10000);
+            Mecanum Motors = new Mecanum(hardwareMap);
+            double forward = -gamepad1.right_stick_y;
+            double strafe = gamepad1.right_stick_x;
+            double turn = gamepad1.left_stick_x;
+            Motors.drive(strafe, forward, turn);
+
+            if(gamepad1.right_bumper){
+                Motors.backRight.setVelocity(Motors.backRight.getVelocity()*10000);
+                Motors.frontLeft.setVelocity(Motors.frontLeft.getVelocity()*10000);
+                Motors.frontRight.setVelocity(Motors.frontRight.getVelocity()*10000);
+                Motors.backLeft.setVelocity(Motors.backLeft.getVelocity()*10000);
             }
-            //SlowModeBaseController
-            if(gamepad1.left_trigger == 2){
-                Motors.frontRight.setVelocity(Motors.frontRightPower/25);
-                Motors.frontLeft.setVelocity(Motors.frontLeftPower/25);
-                Motors.backRight.setVelocity(Motors.backRightPower/25);
-                Motors.backLeft.setVelocity(Motors.backLeftPower/25);
+
+            if(gamepad1.left_bumper){
+                Motors.backRight.setVelocity(Motors.backRight.getVelocity()/10);
+                Motors.frontLeft.setVelocity(Motors.frontLeft.getVelocity()/10);
+                Motors.frontRight.setVelocity(Motors.frontRight.getVelocity()/10);
+                Motors.backLeft.setVelocity(Motors.backLeft.getVelocity()/10);
             }
-            //IntakeAttachmentsController
+
             if(gamepad2.a){
-                intake.setVelocity(100);
+                intake.setVelocity(10000);
             }else{
                 intake.setVelocity(0);
             }
-            //
+
+            if(gamepad2.b){
+                taco.setVelocity(10000);
+            }else{
+                taco.setVelocity(0);
+            }
+
+            if(gamepad2.x){
+                shooter.setVelocity(100);
+            }else{
+                shooter.setVelocity(0);
+            }
+
+            if(gamepad2.y){
+                wobble.setPosition(1);
+            }else{
+                wobble.setPosition(0);
+            }
+
+            double angle = -gamepad2.left_stick_y;]
+            shooter_adjust.setVelocity(angle);
+
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)");
             telemetry.update();
         }
     }

@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.utility.maximum;
-import org.firstinspires.ftc.teamcode.utility.point;
+
 
 
 public class  Mecanum {
@@ -35,8 +34,10 @@ public class  Mecanum {
 //        backLeft    = motors[2];
 //        backRight   = motors[3];
 
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
     }
 //    // for more debugging
 //    double getFrontLeftSpeed(){ return frontLeftSpeed; }
@@ -74,10 +75,10 @@ public class  Mecanum {
 
 
 
-        frontLeft.setVelocity(  (int)(maxTicksPerSec * (ySpeed + xSpeed + turnSpeed)));
-        frontRight.setVelocity( (int)(maxTicksPerSec * (ySpeed - xSpeed - turnSpeed)));
-        backLeft.setVelocity(   (int)(maxTicksPerSec * (ySpeed - xSpeed + turnSpeed)));
-        backRight.setVelocity(  (int)(maxTicksPerSec * (ySpeed + xSpeed - turnSpeed)));
+        frontLeft.setVelocity((maxTicksPerSec * (ySpeed + xSpeed + turnSpeed)));
+        frontRight.setVelocity((maxTicksPerSec * (ySpeed - xSpeed - turnSpeed)));
+        backLeft.setVelocity((maxTicksPerSec * (ySpeed - xSpeed + turnSpeed)));
+        backRight.setVelocity((maxTicksPerSec * (ySpeed + xSpeed - turnSpeed)));
 
 //        //for debugging
 //        frontLeftSpeed = frontLeft.getVelocity();
