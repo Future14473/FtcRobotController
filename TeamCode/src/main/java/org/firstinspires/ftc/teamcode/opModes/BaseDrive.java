@@ -74,7 +74,7 @@ public class BaseDrive extends OpMode
 //            intake.setPower(intakeOut);
 //        }
 
-        MecanumDrive.drive(x,y,turn);
+        MecanumDrive.drive(x,y,turn/2);
 
 
         // Show the elapsed game time and wheel power.
