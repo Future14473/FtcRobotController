@@ -61,11 +61,16 @@ public class Follower {
         pose diff = new pose(dest.x-position.x, dest.y-position.y,
                 RotationUtil.turnLeftOrRight(position.r, dest.dir, Math.PI * 2));
 
+        // to intrinsic
+        point intrinsic = new point(diff.x, diff.y).rotate(-diff.r);
+        diff.x = intrinsic.x;
+        diff.y = intrinsic.y;
+
         // To consider:
         // 1) speeds below 0.1 cannot overcome static friction of drivetrain
         //    Therefore, all speeds below 0.1 will be rounded up to 0.1
         // 2) because of (1), robot will jerk when it gets near a point
-        // So stop moving when close enough
+        //    So stop moving when close enough
 
         double xVel = (Math.abs(diff.x)>1)?     (diff.x/20 + 0.1 * Math.signum(diff.x)):0;
         double yVel = (Math.abs(diff.y)>1)?     (diff.y/20 + 0.1 * Math.signum(diff.y)):0;
@@ -76,9 +81,7 @@ public class Follower {
         telemetry.addData("intention", diff);
 
         // return true if reached point
-        if(xVel == 0 && yVel == 0 && rVel == 0)
-            return true;
-        return false;
+        return (xVel == 0 && yVel == 0 && rVel == 0);
     }
 
     /**
