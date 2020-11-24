@@ -52,7 +52,7 @@ public class Follower {
             point transDiffIntrinsic = transDiff.rotate(position.r - Math.PI / 2);
 
             //actually move
-            drivetrain.drive(transDiffIntrinsic.x / 200, transDiffIntrinsic.y / 200, rotDiff / 200);
+            drivetrain.drive((transDiffIntrinsic.x )/ 50 , transDiffIntrinsic.y / 50, rotDiff / 100);
 
 
             //advance

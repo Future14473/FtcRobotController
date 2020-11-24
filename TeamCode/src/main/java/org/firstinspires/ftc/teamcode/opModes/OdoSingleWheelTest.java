@@ -27,7 +27,7 @@ public class OdoSingleWheelTest extends OpMode
     @Override
     public void init() {
         wheel = hardwareMap.get(DcMotor.class, "shooter");
-        wheel2 = hardwareMap.get(DcMotor.class, "frontLeft");
+        wheel2 = hardwareMap.get(DcMotor.class, "shooter_adjuster");
         odowheel = new FreeSpinOdoWheel(new pose(0,0,0), wheel);
         odowheel2 = new FreeSpinOdoWheel(new pose(0,0,0), wheel2);
 

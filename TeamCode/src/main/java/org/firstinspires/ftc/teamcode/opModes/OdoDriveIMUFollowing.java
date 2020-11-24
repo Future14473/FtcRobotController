@@ -19,16 +19,13 @@ import java.util.List;
 
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
-@TeleOp(name="2 Odometry + Working DriveWheel + IMU Path following", group="Autonomous")
+@TeleOp(name="2 Odometry + IMU Path following", group="Autonomous")
 public class OdoDriveIMUFollowing extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;
+    DcMotor vertical;
     DcMotor horizontal;
-    DcMotor frontLeft;
-    DcMotor frontRight;
-    DcMotor backRight;
-    DcMotor backLeft;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,14 +43,10 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
 
 
         while (opModeIsActive()){
+            telemetry.addData("ffoo", "foo");
             telemetry.addData("IMU Position", imu.getPosition());
 //            telemetry.addData("Odo intial pose")
             telemetry.addData("Odometry Position", odometry.getPosition());
-            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
-            telemetry.addData("frontRight", frontRight.getCurrentPosition());
-            telemetry.addData("backRight", backRight.getCurrentPosition());
-            telemetry.addData("backLeft", backLeft.getCurrentPosition());
-            telemetry.addData("Free Odo Position: ", horizontal.getCurrentPosition());
             telemetry.update();
 
             //mecanum.drive(gamepad1.right_stick_x/3, gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
@@ -65,30 +58,22 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
     }
 
     Odometry defaultConfiguration(){
-        //physical wheels
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-//        DcMotor vertical = hardwareMap.get(DcMotor.class, "vertical");//vertical
-        horizontal = hardwareMap.get(DcMotor.class, "shooter");//horo
+        horizontal = hardwareMap.get(DcMotor.class, "shooter");
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //odometry wheels
-        OdometryWheel frontRightOdo = new DriveWheelOdometryWheel(new pose(178.5,168,Math.PI), frontRight);
-        OdometryWheel frontLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,168,Math.PI), frontLeft);
-        OdometryWheel backRightOdo = new DriveWheelOdometryWheel(new pose(178.5,-168,Math.PI), backRight);
-        OdometryWheel backLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,-168,Math.PI), backLeft);
-//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
-        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,Math.PI/2), horizontal);
+
+        vertical = hardwareMap.get(DcMotor.class, "shooter_adjuster");
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,0), horizontal);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
-        odometryWheels.add(frontLeftOdo);
-        odometryWheels.add(frontRightOdo);
-        odometryWheels.add(backLeftOdo);
-        odometryWheels.add(backRightOdo);
-//        odometryWheels.add(verticalOdo);
+
+        odometryWheels.add(verticalOdo);
         odometryWheels.add(horizontalOdo);
 
         // odometry system
