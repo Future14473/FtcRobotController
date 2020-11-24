@@ -24,6 +24,7 @@ public class OdoWheelIMULocalization extends LinearOpMode {
     IMU imu;
     Odometry odometry;
     DcMotor horizontal;
+    DcMotor vertical;
 
 
     @Override
@@ -55,12 +56,19 @@ public class OdoWheelIMULocalization extends LinearOpMode {
         horizontal = hardwareMap.get(DcMotor.class, "shooter");
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
-        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,Math.PI/2), horizontal);
+
+
+        vertical = hardwareMap.get(DcMotor.class, "shooter_adjuster");
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,0), horizontal);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
 
-//        odometryWheels.add(verticalOdo);
+        odometryWheels.add(verticalOdo);
         odometryWheels.add(horizontalOdo);
 
         // odometry system

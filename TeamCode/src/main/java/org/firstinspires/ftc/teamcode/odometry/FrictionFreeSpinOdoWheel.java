@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.odometry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utility.pose;
-
+// doesn't seem to be needed anymore, DO NOT USE
 public class FrictionFreeSpinOdoWheel extends OdometryWheel{
     DcMotor wheel;
 
