@@ -1,23 +1,19 @@
 package org.firstinspires.ftc.teamcode.pathgen;
 
-import java.io.*;
-import java.util.StringTokenizer;
-
 public class ImportPath {
     public static Path getPath (String path){
         Path ret = new Path();
 
-        PathPoint point = new PathPoint(30,0);
-
+        PathPoint point = new PathPoint(0,10);
         point.speed = 0.3;
-        point.dir = 0;//Math.PI/2;
+        point.dir = -Math.PI/2;
 
-//        PathPoint point2 = new PathPoint(0,-30);
-//        point2.speed = 0.3;
-//        point2.dir = -Math.PI;
+        PathPoint point2 = new PathPoint(20,10);
+        point2.speed = 0.3;
+        point2.dir = -Math.PI;
 
         ret.add(point);
-//        ret.add(point2);
+        ret.add(point2);
 
         return ret;
 

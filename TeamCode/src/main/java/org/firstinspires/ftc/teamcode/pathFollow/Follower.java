@@ -28,43 +28,22 @@ public class Follower {
     String pathFile;
     Thread loop = new Thread(() -> {
 
-
         Path path = ImportPath.getPath(pathFile);
 
         //index of current target point
         int i = 0;
         while (i < path.size() && running) {
-            pose position = odometry.getPosition();
 
-            //move robot towards i
+            // get target position
             PathPoint target = path.get(i);
 
+            // move to target
+            boolean reached = goTowards(target);
 
-
-            //diff in rotation
-            double rotDiff = RotationUtil.turnLeftOrRight(position.r, target.dir, Math.PI * 2);
-
-            //diff in translation
-            point transDiff = new point(target.x - position.x, target.y - position.y);
-            transDiff.scale(target.speed);
-
-            //convert from field angles to robot intrinsic angles
-            point transDiffIntrinsic = transDiff.rotate(position.r - Math.PI / 2);
-
-            //actually move
-            drivetrain.drive((transDiffIntrinsic.x )/ 50 , transDiffIntrinsic.y / 50, rotDiff / 100);
-
-
-            //advance
-            double dist = target.distTo(new point(position.x, position.y));
-            double angle = Math.abs(RotationUtil.turnLeftOrRight(position.r, target.dir, Math.PI / 2));
-
-            if (dist < closeEnoughDistance && angle < closeEnoughAngle) {
+            //advance point
+            if (reached)
                 i++;
-            }
 
-//                telemetry.addData("driving velocity",
-//                        transDiffIntrinsic.x + " " + transDiffIntrinsic.y + " " + rotDiff);
             telemetry.addData("Destination", String.format("%.1f %.1f %.1f", target.x, target.y, target.dir));
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.update();
@@ -74,6 +53,33 @@ public class Follower {
         telemetry.addData("Done with path", "done");
         telemetry.update();
     });
+
+    //return true if dest reached
+    boolean goTowards(PathPoint dest){
+        pose position = odometry.getPosition();
+
+        pose diff = new pose(dest.x-position.x, dest.y-position.y,
+                RotationUtil.turnLeftOrRight(position.r, dest.dir, Math.PI * 2));
+
+        // To consider:
+        // 1) speeds below 0.1 cannot overcome static friction of drivetrain
+        //    Therefore, all speeds below 0.1 will be rounded up to 0.1
+        // 2) because of (1), robot will jerk when it gets near a point
+        // So stop moving when close enough
+
+        double xVel = (Math.abs(diff.x)>1)?     (diff.x/20 + 0.1 * Math.signum(diff.x)):0;
+        double yVel = (Math.abs(diff.y)>1)?     (diff.y/20 + 0.1 * Math.signum(diff.y)):0;
+        double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
+
+        drivetrain.drive(xVel, yVel, rVel);
+
+        telemetry.addData("intention", diff);
+
+        // return true if reached point
+        if(xVel == 0 && yVel == 0 && rVel == 0)
+            return true;
+        return false;
+    }
 
     /**
      * Follows the pathFile found in local directory

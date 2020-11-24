@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unusedOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,7 @@ import java.util.List;
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
 @TeleOp(name="Working DriveWheel + IMU Path following", group="Autonomous")
+@Disabled
 public class DriveWheelIMUFollowing extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
