@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unusedOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 
 @TeleOp(name="Vuforia Seek", group="Linear Opmode")
-
+@Disabled
 public class VuforiaSeek extends LinearOpMode
 {
     // Declare OpMode members.

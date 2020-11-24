@@ -35,7 +35,7 @@ public class Odometry implements GivesPosition {
 
     public pose getPosition(){ return position;}
 
-    public void overridePosition(pose aNewPosition){
+    public void setPosition(pose aNewPosition){
         position = aNewPosition;
     }
 

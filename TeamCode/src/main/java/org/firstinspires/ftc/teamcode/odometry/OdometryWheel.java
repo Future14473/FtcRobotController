@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
-import android.util.Log;
-
 import org.firstinspires.ftc.teamcode.utility.pose;
-
-import java.util.logging.Logger;
 
 
 public abstract class OdometryWheel {
@@ -16,7 +12,7 @@ public abstract class OdometryWheel {
     private double prevTicks = 0;
     protected double deltaTicks = 0;
 
-    abstract long getWheelPosition();
+    abstract long getWheelTicks();
 
     public double totalDistTravelled = 0;
 
@@ -27,6 +23,7 @@ public abstract class OdometryWheel {
     // wheel is facing forwards. Just be consistent with sideways wheel angles
     public OdometryWheel(pose offset){
         this.offset = offset;
+        //prevTicks = getWheelTicks();
     }
 
 
@@ -36,7 +33,7 @@ public abstract class OdometryWheel {
     public void updateDelta(){
         prevTicks += deltaTicks;
         //get ticks
-        double measurement = getWheelPosition();
+        double measurement = getWheelTicks();
 //        deltaTicks = RotationUtil.turnLeftOrRight(prevTicks, measurement, ticksPerRev);
         deltaTicks = measurement - prevTicks; //ticks per rev doesn't matter because the encoders don't roll over
     }

@@ -21,7 +21,7 @@ public class FrictionFreeSpinOdoWheel extends OdometryWheel{
     }
 
     @Override
-    public long getWheelPosition() {
+    public long getWheelTicks() {
         return wheel.getCurrentPosition();
     }
 }

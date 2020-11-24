@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.utility.point;
 
 
 public class Mecanum {
-    DcMotorEx frontLeft;
-    DcMotorEx frontRight;
-    DcMotorEx backLeft;
-    DcMotorEx backRight;
+    RampVelocityMotor frontLeft;
+    RampVelocityMotor frontRight;
+    RampVelocityMotor backLeft;
+    RampVelocityMotor backRight;
 
     //for debugging
     double frontLeftSpeed;
@@ -25,26 +25,13 @@ public class Mecanum {
 
     //top l, top r, bottom l, bottom r
     public Mecanum(HardwareMap hardwareMap){  //todo bring back the list of motors
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        frontLeft   = new RampVelocityMotor(hardwareMap.get(DcMotorEx.class, "frontLeft"));
+        frontRight  = new RampVelocityMotor(hardwareMap.get(DcMotorEx.class, "frontRight"));
+        backRight   = new RampVelocityMotor(hardwareMap.get(DcMotorEx.class, "backRight"));
+        backLeft    = new RampVelocityMotor(hardwareMap.get(DcMotorEx.class, "backLeft"));
 
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        frontLeft   = motors[0];
-//        frontRight  = motors[1];
-//        backLeft    = motors[2];
-//        backRight   = motors[3];
-
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.self.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.self.setDirection(DcMotorEx.Direction.REVERSE);
     }
 //    // for more debugging
 //    double getFrontLeftSpeed(){ return frontLeftSpeed; }
@@ -79,7 +66,6 @@ public class Mecanum {
 //                move.y - move.x + turnSpeed,        //BL
 //                move.y + move.x - turnSpeed);       //BR
         //max.squishIntoRange(1.0);
-
 
 
         frontLeft.setVelocity(  (int)(maxTicksPerSec * (-ySpeed - xSpeed + turnSpeed)));

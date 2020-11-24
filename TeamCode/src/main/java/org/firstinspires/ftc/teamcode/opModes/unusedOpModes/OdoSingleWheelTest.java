@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unusedOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 
 @TeleOp(name="OdoSingleTest", group="Iterative Opmode")
-
+@Disabled
 public class OdoSingleWheelTest extends OpMode
 {
     DcMotor wheel;

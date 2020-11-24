@@ -17,7 +17,7 @@ public class DriveWheelOdometryWheel extends OdometryWheel{
     }
 
     @Override
-    public long getWheelPosition() {
+    public long getWheelTicks() {
         return wheel.getCurrentPosition();
     }
 }
