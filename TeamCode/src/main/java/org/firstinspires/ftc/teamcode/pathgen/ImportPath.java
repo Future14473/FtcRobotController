@@ -4,16 +4,31 @@ public class ImportPath {
     public static Path getPath (String path){
         Path ret = new Path();
 
-        PathPoint point = new PathPoint(0,10);
-        point.speed = 0.3;
-        point.dir = -Math.PI/2;
+        PathPoint point0 = new PathPoint(0,0);
+        point0.speed = 0.3;
+        point0.dir = Math.PI/2;
 
-        PathPoint point2 = new PathPoint(20,10);
-        point2.speed = 0.3;
-        point2.dir = -Math.PI;
+        ret.add(point0);
+//        PathPoint point = new PathPoint(0,10);
+//        point.speed = 0.3;
+//        point.dir = 0;
+//
+//        PathPoint point2 = new PathPoint(20,10);
+//        point2.speed = 0.3;
+//        point2.dir = 0;
+//
+//        PathPoint point3 = new PathPoint(20,10);
+//        point3.speed = 0.3;
+//        point3.dir = Math.PI/2;
+//
+//        PathPoint point4 = new PathPoint(-10,-30);
+//        point4.speed = 0.3;
+//        point4.dir = Math.PI/2;
 
-        ret.add(point);
-        ret.add(point2);
+//        ret.add(point);
+//        ret.add(point2);
+//        ret.add(point3);
+//        ret.add(point4);
 
         return ret;
 

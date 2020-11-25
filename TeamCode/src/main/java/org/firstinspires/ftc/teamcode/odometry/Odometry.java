@@ -65,11 +65,13 @@ public class Odometry implements GivesPosition {
             wheel.distanceTraveledTowardsAngle(
                     wheel.getDeltaPosition(), facingForward));
 
+
         //average horizontal translation
         double horoTransNet =
         average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
             wheel.distanceTraveledTowardsAngle(
                     wheel.getDeltaPosition(), facingRight));
+
 
         //average rotation
         double rotAngNet = average.ofAll(wheels, (Consumer<OdometryWheel>) wheel ->
@@ -84,7 +86,8 @@ public class Odometry implements GivesPosition {
                                 1,
                                 wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)))));
 
-        return new pose(horoTransNet, vertTransNet, rotAngNet);
+        return new pose(0,0,0);
+//        return new pose(horoTransNet, vertTransNet, rotAngNet);
     }
 
     /**

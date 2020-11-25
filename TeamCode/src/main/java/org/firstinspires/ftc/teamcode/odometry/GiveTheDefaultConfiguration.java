@@ -21,8 +21,11 @@ public class GiveTheDefaultConfiguration {
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,Math.PI/2), horizontal);
-        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI), vertical);
+//        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
+//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
+
+        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(0,0,Math.PI/2), horizontal);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(0,0, Math.PI), vertical);
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
 
