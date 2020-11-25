@@ -15,9 +15,6 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 public class Follower {
-
-    double closeEnoughDistance = 10;
-    double closeEnoughAngle = Math.PI/6;
     public PathPoint targetPose;
     volatile boolean running = true;
 
@@ -50,6 +47,8 @@ public class Follower {
         }
 
         drivetrain.drive(0, 0, 0);
+
+        telemetry.addData("Odometry Position", odometry.getPosition());
         telemetry.addData("Done with path", "done");
         telemetry.update();
     });
