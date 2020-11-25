@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.odometry.FreeSpinOdoWheel;
+import org.firstinspires.ftc.teamcode.odometry.archive.FreeSpinOdoWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 import java.util.ArrayList;

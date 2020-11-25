@@ -1,123 +1,80 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.GivesPosition;
+import org.firstinspires.ftc.teamcode.imu.IMU;
+import org.firstinspires.ftc.teamcode.utility.pose;
 
-public class Odometry2DRot {
-        // Declare class Instances
-        double radiansAngle;
-        double wheelDeltaX;
-        double wheelDeltaY;
-        double previousCoordinateX = 0;
-        double previousCoordinateY = 0;
-        double radiusWheel1 = 1;
-        double radiusWheel2 = 1;
+public class Odometry2DRot implements GivesPosition {
+    OdoWheel2DRot[]  wheels;
+    IMU imu;
 
-        public ArrayList getPositionReset(){
-            // Get local coordinates
-            double deltaX = getDeltaX();
-            double localCoordinateX = getLocalCoordinate(previousCoordinateX, deltaX);
+    pose previousPosition;
+    pose deltaPosition;
+    volatile pose currentPosition; //Todo check if this needs to be volatile
 
-            double deltaY = getDeltaY();
-            double localCoordinateY = getLocalCoordinate(previousCoordinateY, deltaY);
+    double vertical = Math.PI/2; // direction that the wheel faces
+    double horizontal = Math.PI;
 
-            // Add global coordinates to a list
-            double globalX = getGlobalX(localCoordinateX, localCoordinateY);
-            double globalY = getGlobalY(localCoordinateX, localCoordinateY);
+    volatile boolean running = false;
 
-            // Reset the previousCoordinates to now be the current globalCoordiantes
-            getNewPreviousCoordinateX(globalX);
-            getNewPreviousCoordinateY(globalY);
 
-            ArrayList globalCoordinates = new ArrayList();
-            globalCoordinates.add(globalX);
-            globalCoordinates.add(globalY);
-            return globalCoordinates;
+    Thread loop = new Thread(() -> {
+        while (running){
+            loop();
         }
+    });
 
-        // Getter functions
-        public double getRadiansAngle(){
-            return radiansAngle;
+    void loop(){
+        getDeltaPosition();
+        setExtrinsic(getCurrentIntrinsic());
+        previousPosition = currentPosition; //update the loop
+    }
+
+    public Odometry2DRot(OdoWheel2DRot[] wheels, pose initial, IMU imu){
+        this.imu = imu;
+        this.wheels = wheels;
+        previousPosition = initial;
+    }
+
+    void getDeltaPosition(){ //TODO take into account of all mounting positions
+
+        for (OdoWheel2DRot wheel : wheels){
+            deltaPosition.r = imu.getHeading();
+
+            // find the delta position and takes into account for turn drift using IMU
+            if (wheel.mountAngle == horizontal){
+                deltaPosition.x = wheel.getWheelTicks() - wheel.rotationInterferance * deltaPosition.r;
+            }
+            else if (wheel.mountAngle == vertical) {
+                deltaPosition.y = wheel.getWheelTicks() - wheel.rotationInterferance * deltaPosition.r;
+            }
         }
+    }
 
-        public double getNewRadiansAngle(double newRadiansAngle){
-            radiansAngle = newRadiansAngle;
-            return radiansAngle;
-        }
+    pose getCurrentIntrinsic(){
+        // add the deltas to the previous position
+        pose p = previousPosition; //make a copy of previous position so we can use it later to find extrinsic
+        p.x += deltaPosition.x;
+        p.y += deltaPosition.y;
+        p.r += deltaPosition.r;
+        return p; //note that this is intrinsic
+    }
 
-        public double getWheelDeltaX(){
-            return wheelDeltaX;
-        }
+    void setExtrinsic(pose intrinsic){
+        intrinsic = getCurrentIntrinsic();
+        // previousPosition is currently intrinsic, so we need to rotate it to make it extrinsic
+        currentPosition.x  = ((intrinsic.x - previousPosition.x) * Math.cos(deltaPosition.r))
+                - ((intrinsic.y - previousPosition.y) * Math.sin(deltaPosition.r))
+                + previousPosition.x;
 
-        public double getNewWheelDeltaX(double newWheelDeltaX){
-            wheelDeltaX = newWheelDeltaX;
-            return wheelDeltaX;
-        }
-
-        public double getWheelDeltaY(){
-            return wheelDeltaY;
-        }
-
-        public double getNewWheelDeltaY(double newWheelDeltaY) {
-            wheelDeltaY = newWheelDeltaY;
-            return wheelDeltaY;
-        }
-
-        public double getPreviousCoordinateX(){
-            return previousCoordinateX;
-        }
-
-        public double getNewPreviousCoordinateX(double newPreviousCoordinateX) {
-            previousCoordinateX = newPreviousCoordinateX;
-            return previousCoordinateX;
-        }
-
-        public double getPreviousCoordinateY(){
-            return previousCoordinateY;
-        }
-
-        public double getNewPreviousCoordinateY(double newPreviousCoordinateY) {
-            previousCoordinateY = newPreviousCoordinateY;
-            return previousCoordinateY;
-        }
-
-
-        // Local(intrinsic) Wheel Displacement
-        public double getDeltaX(){
-            double arcDelta = Math.toRadians(radiansAngle) * radiusWheel1;
-            double deltaX = wheelDeltaX - arcDelta;
-            return deltaX;
-        }
-
-        public double getDeltaY(){
-            double arcDelta = Math.toRadians(radiansAngle) * radiusWheel2;
-            double deltaY = wheelDeltaY - arcDelta;
-            return deltaY;
-        }
-
-        // Add local wheel displacement to previous coordinate to get local coordinate
-        public double getLocalCoordinate(double previousCoordinate, double delta){
-            double localCoordinate = previousCoordinate + delta;
-            return localCoordinate;
-        }
-
-        // Change the localCoordinate into a global Coordinate by rotating the 2D point by theta
-        // Formulas derived from rotating a 2D point formula about arbitrary point
-        public double getGlobalX(double localCoordinateX, double localCoordinateY){
-            double globalX = ((localCoordinateX - previousCoordinateX) * Math.cos(radiansAngle)) -
-                    ((localCoordinateY - previousCoordinateY) * Math.sin(radiansAngle)) + previousCoordinateX;
-            return globalX;
-        }
-
-        public double getGlobalY(double localCoordinateX, double localCoordinateY) {
-            double globalY = ((localCoordinateX - previousCoordinateX) * Math.sin(radiansAngle)) +
-                    ((localCoordinateY - previousCoordinateY) * Math.cos(radiansAngle)) + previousCoordinateY;
-            return globalY;
-        }
-
-
-
-
-
+        currentPosition.y = ((intrinsic.x - previousPosition.x) * Math.sin(deltaPosition.r))
+                - ((intrinsic.y - previousPosition.y) * Math.cos(deltaPosition.r))
+                + previousPosition.y;
     }
 
 
+    @Override
+    public pose getPosition() {
+        return currentPosition;
+    }
+}

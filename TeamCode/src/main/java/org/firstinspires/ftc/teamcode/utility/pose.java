@@ -11,6 +11,7 @@ public class pose extends Position{
         this.r = r;
     }
 
+
     public pose (Position position) { //TODO check z axis
         this(position.x, position.y, position.z);
     }
@@ -22,6 +23,12 @@ public class pose extends Position{
         this.x += rotated.x;
         this.y += rotated.y;
         this.r += p.r;
+    }
+
+    public pose addPoses(pose pose1, pose pose2){
+        return new pose(pose1.x + pose2.x,
+                pose1.y + pose2.y,
+                pose1.r + pose2.r);
     }
 
     public String toString(){
