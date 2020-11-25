@@ -24,6 +24,9 @@ public class Odometry2DRot implements GivesPosition {
         }
     });
 
+    public void start(){ running = true; }
+    public void stop(){ running = false; }
+
     void loop(){
         getDeltaPosition();
         setExtrinsic(getCurrentIntrinsic());
