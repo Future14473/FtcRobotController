@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.odometry;
+package org.firstinspires.ftc.teamcode.odometry.dev;
 
 import android.util.Log;
 
@@ -7,8 +7,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.utility.pose;
-
-import java.util.ArrayList;
 
 
 public class Odometry2DRot_complicated implements GivesPosition {
@@ -19,11 +17,12 @@ public class Odometry2DRot_complicated implements GivesPosition {
     pose previousPosition = new pose(0,0,0);
     volatile pose currentPosition = new pose(0,0,0); //Todo check if this needs to be volatile
 
-    pose currentDelta = new pose(0,0,0);
-    pose totalTicks = new pose (0,0,0);
-    pose sumPrevious = new pose(0,0,0);
+    pose previousDelta = new pose(0,0,0);
+    pose currentDelta = new pose(0,0,0); // delta during the time between odometry updates
+    pose totalDelta = new pose (0,0,0); // only used for getting currentDelta, otherwise ignore
 
-//    private pose[] previousDeltaPositions;
+    OdoWheel2DRot horo;
+    OdoWheel2DRot vert;
 
 
     double vertical = -Math.PI/2; // direction that the wheel faces
@@ -34,13 +33,7 @@ public class Odometry2DRot_complicated implements GivesPosition {
 
     private final Thread loop = new Thread(() -> {
         while (running){
-           updateTotalDelta(wheels);
-           updateCurentDelta();
-//            telemetry.addData("Total Wheel Displacement", totalTicks);
-//           telemetry.addData("current delta ", currentDelta);
-           setExtrinsic(currentDelta);
-           setExtrinsic(getCurrentIntrinsic());
-           telemetry.addData("Current Position", currentPosition);
+            loop();
         }
     });
 
@@ -48,10 +41,25 @@ public class Odometry2DRot_complicated implements GivesPosition {
     public void stop(){ running = false; }
 
     void loop(){
+        updateTotalDelta();
+        updateCurrentDelta();
+        Log.e("Current Delta", currentDelta.toString());
 
-//        getDeltaPosition();
-//        setExtrinsic(getCurrentIntrinsic());
-//        previousPosition = currentPosition; //update the loop
+        Log.e("Absolute Angle ", String.valueOf(totalDelta.r));
+        Log.e("Previous Angle ", String.valueOf(previousDelta.r));
+        Log.e("Change in R", String.valueOf(currentDelta.r));
+
+//       setExtrinsic(currentDelta);
+        pose intrinsicPosition = getCurrentIntrinsic();
+       Log.e("intrinsic delta total", intrinsicPosition.toString());
+
+
+           setExtrinsic(getCurrentIntrinsic());
+//           telemetry.addData("Current Position", currentPosition);
+        telemetry.addData("Previous Position, ", previousPosition.toString());
+        telemetry.addData("Current Position, ", currentPosition.toString());
+           previousPosition = currentPosition;
+        telemetry.update();
     }
 
     public Odometry2DRot_complicated(OdoWheel2DRot[] wheels, pose initial, IMU imu, Telemetry telemetry){
@@ -59,42 +67,46 @@ public class Odometry2DRot_complicated implements GivesPosition {
         this.wheels = wheels;
         previousPosition = initial;
         this.telemetry = telemetry;
-    }
-
-    double ticksToDistance(OdoWheel2DRot wheel){
-
-        return (wheel.getWheelTicks() / wheel.ticksPerRev())
-                * 2 * Math.PI * wheel.radius() * -1; //values are negative because of the way it is mounted
-    }
-
-    void updateTotalDelta(OdoWheel2DRot[] wheels) { //TODO take into account of all mounting positions
-        for (OdoWheel2DRot wheel : wheels) {
+        for (OdoWheel2DRot wheel : wheels) { //TODO take into account of all mounting positions
             if (wheel.mountAngle == horizontal) {
-                totalTicks.x = ticksToDistance(wheel);
+                horo = wheel;
             } else if (wheel.mountAngle == vertical) {
-                totalTicks.y = ticksToDistance(wheel);
+                vert = wheel;
             }
 
         }
-        totalTicks.r = imu.getHeading();
     }
-    // for debugging
-//    ArrayList<Double> listOfXDelta = new ArrayList<Double>();
 
-    void updateCurentDelta(){
-        currentDelta.x = totalTicks.x - sumPrevious.x;
-//        listOfXDelta.add(currentDelta.x);
+    double ticksToDistance(OdoWheel2DRot wheel){
+        return (wheel.getWheelTicks() / wheel.ticksPerRev())
+                * 2 * Math.PI * wheel.radius() * -1;
 
-//        Log.e("Interval Wheel Displacement", listOfXDelta.toString());
-        sumPrevious.x += currentDelta.x;
+    }
 
-        currentDelta.y = totalTicks.y - sumPrevious.y;
-        sumPrevious.y += currentDelta.y;
+    public void setPosition(pose aNewPosition){ currentPosition = aNewPosition; }
+
+    void updateTotalDelta() {
+        totalDelta.x = ticksToDistance(horo);
+        totalDelta.y = ticksToDistance(vert);
+        totalDelta.r = imu.getHeading();
+    }
+
+    void updateCurrentDelta(){
 
         // gyroscope is special, everything is absolute not a sum, but we keep the same poses as before
         // to make things easier to calculate
-        currentDelta.r = totalTicks.r - sumPrevious.r;
-        sumPrevious.r = currentDelta.r; // not adding just re-setting value
+        currentDelta.r = Math.abs(totalDelta.r) - previousDelta.r;
+        previousDelta.r = currentDelta.r; // not adding just re-setting value
+
+        // delta distance = delta of axis + any rotation interference
+        // derived formula --> delta of axis =  delta distance - rotation interference
+        currentDelta.x = totalDelta.x - previousDelta.x - (horo.rotationInterferance * currentDelta.r);
+        previousDelta.x += currentDelta.x;
+
+        currentDelta.y = totalDelta.y - previousDelta.y - (vert.rotationInterferance * currentDelta.r);
+        previousDelta.y += currentDelta.y;
+
+
     }
 
     pose getCurrentIntrinsic(){

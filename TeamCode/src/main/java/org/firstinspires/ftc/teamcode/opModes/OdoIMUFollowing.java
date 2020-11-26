@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode.opModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.*;
-import org.firstinspires.ftc.teamcode.odometry.archive.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.dev.GiveTheDefaultConfiguration;
 import org.firstinspires.ftc.teamcode.pathFollow.Follower;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
@@ -18,8 +17,6 @@ public class OdoIMUFollowing extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;
-    DcMotor vertical;
-    DcMotor horizontal;
 
     @Override
     public void runOpMode() throws InterruptedException {

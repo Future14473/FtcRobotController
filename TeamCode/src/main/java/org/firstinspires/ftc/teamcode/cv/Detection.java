@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.odometry.archive.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
 import org.firstinspires.ftc.teamcode.utility.pose;
 import org.openftc.easyopencv.OpenCvPipeline;
 

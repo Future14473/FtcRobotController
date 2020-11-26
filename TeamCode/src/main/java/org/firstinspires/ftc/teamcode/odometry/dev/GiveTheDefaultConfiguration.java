@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.odometry;
+package org.firstinspires.ftc.teamcode.odometry.dev;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.imu.IMU;
-import org.firstinspires.ftc.teamcode.odometry.archive.FreeSpinOdoWheel;
-import org.firstinspires.ftc.teamcode.odometry.archive.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.working.FreeSpinOdoWheel;
+import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
 
-import org.firstinspires.ftc.teamcode.odometry.archive.OdometryThatusesIMUforHeading;
-import org.firstinspires.ftc.teamcode.odometry.archive.OdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.working.OdometryThatusesIMUforHeading;
+import org.firstinspires.ftc.teamcode.odometry.working.OdometryWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 import java.util.ArrayList;
@@ -24,8 +24,14 @@ public class GiveTheDefaultConfiguration {
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        OdoWheel2DRot horizontalOdo = new OdoWheel2DRot(Math.PI, 0, horizontal);//todo fix the rot interferance
-        OdoWheel2DRot verticalOdo = new OdoWheel2DRot(-Math.PI/2, 0,vertical);
+        // interference per 2 PI from testing:  60, 59, 53, 65, 61, 61, --> 59.83 per 2PI
+        OdoWheel2DRot horizontalOdo = new OdoWheel2DRot(Math.PI,
+                105/(2 * Math.PI), horizontal);//todo fix the rot interferance
+
+        // interference per 2 PI from testing:  negative --> 123, 128, 123, 127, 125, 129 --> 125.83 per 2PI
+        OdoWheel2DRot verticalOdo = new OdoWheel2DRot(-Math.PI/2,
+                -208/(2 * Math.PI),vertical);
+
         OdoWheel2DRot[] odoWheels = {horizontalOdo, verticalOdo};
 
         pose initial = new pose(0,0,0);

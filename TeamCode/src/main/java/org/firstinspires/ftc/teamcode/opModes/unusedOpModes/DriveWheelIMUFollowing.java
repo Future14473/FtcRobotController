@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.archive.DriveWheelOdometryWheel;
-import org.firstinspires.ftc.teamcode.odometry.archive.Odometry;
-import org.firstinspires.ftc.teamcode.odometry.archive.OdometryThatusesIMUforHeading;
-import org.firstinspires.ftc.teamcode.odometry.archive.OdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.working.DriveWheelOdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.working.OdometryThatusesIMUforHeading;
+import org.firstinspires.ftc.teamcode.odometry.working.OdometryWheel;
 import org.firstinspires.ftc.teamcode.pathFollow.Follower;
 import org.firstinspires.ftc.teamcode.utility.pose;
 

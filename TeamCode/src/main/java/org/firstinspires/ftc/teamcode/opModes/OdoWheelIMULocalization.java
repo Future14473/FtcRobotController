@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.*;
-import org.firstinspires.ftc.teamcode.odometry.archive.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.dev.GiveTheDefaultConfiguration;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
