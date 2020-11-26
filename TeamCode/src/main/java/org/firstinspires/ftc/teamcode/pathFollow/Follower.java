@@ -22,7 +22,7 @@ public class Follower {
     Mecanum drivetrain;
     Telemetry telemetry;
     GivesPosition odometry;
-    String pathFile = "org/firstinspires/ftc/teamcode/pathFollow/PathTXTs/paths.txt";
+    String pathFile;
     Thread loop = new Thread(() -> {
 
         Path path = ImportPath.getPath(pathFile);

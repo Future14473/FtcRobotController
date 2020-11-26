@@ -86,8 +86,8 @@ public class Odometry implements GivesPosition {
                                 1,
                                 wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)))));
 
-//        return new pose(0,0,0);
-        return new pose(horoTransNet, vertTransNet, rotAngNet);
+        return new pose(0,0,0);
+//        return new pose(horoTransNet, vertTransNet, rotAngNet);
     }
 
     /**
