@@ -1,14 +1,50 @@
 package org.firstinspires.ftc.teamcode.pathgen;
 
+import org.firstinspires.ftc.teamcode.pathFollow.PathTXTs.Paths;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
 public class ImportPath {
     public static Path getPath (String path){
+
+        String stringPath = Paths.getDefaultPath("default");
         Path ret = new Path();
+        for (String line : stringPath.split("\n")){
 
-        PathPoint point0 = new PathPoint(0,0);
-        point0.speed = 0.3;
-        point0.dir = Math.PI/2;
+            int count = 0;
+            double x = 0;
+            double y = 0;
+            double speed = 0;
+            double dir = 0;
 
-        ret.add(point0);
+            for (String pathValue : line.split(" ")){
+                if (count == 0){
+                     x = Integer.parseInt(pathValue);
+                } else if (count == 1){
+                     y = Integer.parseInt(pathValue);
+                } else if ((count == 2) && (pathValue != null)){
+                     dir = Integer.parseInt(pathValue); //todo check with xuyang to see if order is correct
+                } else if ((count == 3) && (pathValue != null)) {
+                     speed = Integer.parseInt(pathValue);
+                }
+                count++;
+            }
+            PathPoint toAdd = new PathPoint(x, y);
+                toAdd.speed = speed;
+                toAdd.dir = dir;
+                ret.add(toAdd);
+        }
+
+        return ret;
+//
+//        PathPoint point0 = new PathPoint(0,0);
+//        point0.speed = 0.3;
+//        point0.dir = Math.PI/2;
+//
+//        ret.add(point0);
 //        PathPoint point = new PathPoint(0,10);
 //        point.speed = 0.3;
 //        point.dir = 0;
@@ -30,29 +66,30 @@ public class ImportPath {
 //        ret.add(point3);
 //        ret.add(point4);
 
-        return ret;
+//        return ret;
 
-        /*
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                StringTokenizer t = new StringTokenizer(line, ",");
-                double x = Integer.parseInt(t.nextToken());
-                double y = Integer.parseInt(t.nextToken());
-                double speed = Integer.parseInt(t.nextToken());
-                double dir = Integer.parseInt(t.nextToken());
 
-                PathPoint toAdd = new PathPoint(x, y);
-                toAdd.speed = speed;
-                toAdd.dir = dir;
-
-                ret.add(toAdd);
-                return ret;
-            }
-        }catch (IOException e) {
-            System.out.printf("File %s not found%n", path);
-        }
-
-        return null;*/
+//        Path ret = new Path();
+//        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                StringTokenizer t = new StringTokenizer(line, ",");
+//                double x = Integer.parseInt(t.nextToken());
+//                double y = Integer.parseInt(t.nextToken());
+//                double speed = Integer.parseInt(t.nextToken());
+//                double dir = Integer.parseInt(t.nextToken());
+//
+//                PathPoint toAdd = new PathPoint(x, y);
+//                toAdd.speed = speed;
+//                toAdd.dir = dir;
+//
+//                ret.add(toAdd);
+//                return ret;
+//            }
+//        }catch (IOException e) {
+//            System.out.printf("File %s not found%n", path);
+//        }
+//
+//        return null;
     }
 }
