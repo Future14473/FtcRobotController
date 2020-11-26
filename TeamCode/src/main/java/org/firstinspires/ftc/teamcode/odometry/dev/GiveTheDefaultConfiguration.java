@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.imu.IMU;
-import org.firstinspires.ftc.teamcode.odometry.working.FreeSpinOdoWheel;
-import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.FreeSpinOdoWheel;
+import org.firstinspires.ftc.teamcode.odometry.Odometry;
 
-import org.firstinspires.ftc.teamcode.odometry.working.OdometryThatusesIMUforHeading;
-import org.firstinspires.ftc.teamcode.odometry.working.OdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.OdometryThatusesIMUforHeading;
+import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 import java.util.ArrayList;
@@ -49,11 +49,11 @@ public class GiveTheDefaultConfiguration {
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-//        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
-//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
+        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
 
-        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(0,0,Math.PI/2), horizontal);
-        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(0,0, Math.PI), vertical);
+//        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(0,0,Math.PI/2), horizontal);
+//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(0,0, Math.PI), vertical);
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
 

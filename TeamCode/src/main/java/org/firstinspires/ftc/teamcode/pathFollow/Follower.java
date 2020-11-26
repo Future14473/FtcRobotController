@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.pathFollow;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.working.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
 import org.firstinspires.ftc.teamcode.pathgen.Path;
 import org.firstinspires.ftc.teamcode.pathgen.PathPoint;

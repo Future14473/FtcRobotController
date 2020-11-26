@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
-@TeleOp(name="2 Odometry + IMU Following", group="Autonomous")
-public class OdoIMUFollowing extends LinearOpMode {
+@TeleOp(name="2D Odometry + IMU Following", group="Autonomous")
+public class Odo2DIMUFollowing extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;

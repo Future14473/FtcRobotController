@@ -100,10 +100,12 @@ public class Odometry2DRot_complicated implements GivesPosition {
 
         // delta distance = delta of axis + any rotation interference
         // derived formula --> delta of axis =  delta distance - rotation interference
-        currentDelta.x = totalDelta.x - previousDelta.x - (horo.rotationInterferance * currentDelta.r);
+//        currentDelta.x = totalDelta.x - previousDelta.x - (horo.rotationInterferance * currentDelta.r)
+        currentDelta.x = totalDelta.x - previousDelta.x;
         previousDelta.x += currentDelta.x;
 
-        currentDelta.y = totalDelta.y - previousDelta.y - (vert.rotationInterferance * currentDelta.r);
+//        currentDelta.y = totalDelta.y - previousDelta.y - (vert.rotationInterferance * currentDelta.r);
+        currentDelta.y = totalDelta.y - previousDelta.y;
         previousDelta.y += currentDelta.y;
 
 
