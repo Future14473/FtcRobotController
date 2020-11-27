@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.utility.*;
 import java.util.List;
 import java.util.function.Function;
 
-public class AxisAlignedWheelsOdometry extends Odometry {
+public class RotationOdometry extends Odometry {
     IMU imu;
     double prevAngle = 0;
 
-    public AxisAlignedWheelsOdometry(pose initial, IMU imu, List<OdometryWheel> wheels) {
+    public RotationOdometry(pose initial, IMU imu, List<OdometryWheel> wheels) {
         super(initial, wheels);
         this.imu = imu;
     }
