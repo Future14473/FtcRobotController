@@ -12,7 +12,8 @@ public class ImportPath {
 
         String stringPath = Paths.getDefaultPath("default");
         Path ret = new Path();
-        for (String line : stringPath.split("\n")){
+        String[] lines = stringPath.split("\n");
+        for (String line : lines){
 
             int count = 0;
             double x = 0;
@@ -20,9 +21,10 @@ public class ImportPath {
             double speed = 0;
             double dir = 0;
 
-            for (String pathValue : line.split(" ")){
+            String[] pathValues = line.split(" ");
+            for (String pathValue : pathValues){
                 if (count == 0){
-                     x = Integer.parseInt(pathValue);
+                     x = Integer.parseInt( pathValue);
                 } else if (count == 1){
                      y = Integer.parseInt(pathValue);
                 } else if ((count == 2) && (pathValue != null)){
