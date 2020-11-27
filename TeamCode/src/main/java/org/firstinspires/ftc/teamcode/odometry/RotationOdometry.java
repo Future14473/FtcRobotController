@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.utility.*;
 import java.util.List;
 import java.util.function.Function;
 
-public class AxisAlignedWheelsOdometry extends Odometry {
+public class RotationOdometry extends Odometry {
     IMU imu;
     double prevAngle = 0;
 
-    public AxisAlignedWheelsOdometry(pose initial, IMU imu, List<OdometryWheel> wheels) {
+    public RotationOdometry(pose initial, IMU imu, List<OdometryWheel> wheels) {
         super(initial, wheels);
         this.imu = imu;
     }
@@ -41,13 +41,15 @@ public class AxisAlignedWheelsOdometry extends Odometry {
         //average vertical translation
         double vertTrans = average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
                 // distance travelled vertically (w/o taking in account rotation)
-                wheel.distanceTraveledTowardsAngle(wheel.getDeltaDistance(), facingForward)
-                // subtract the amount travelled due to rotation
-                - wheel.dotProduct(
-                        // length of sector travelled
-                        wheel.distanceToCenter() * rotDelta,
-                        // direction of travel
-                        wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)
+                wheel.distanceTraveledTowardsAngle(
+                    // subtract the amount spun due to rotation
+                    wheel.getDeltaDistance() - wheel.dotProduct(
+                            // length of sector travelled
+                            wheel.distanceToCenter() * rotDelta,
+                            // direction of travel
+                            wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)
+                    ),
+                    facingRight
                 )
         );
 
