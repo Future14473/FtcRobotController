@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.utility.Average;
-import org.firstinspires.ftc.teamcode.utility.Timing;
 import org.firstinspires.ftc.teamcode.utility.point;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
@@ -63,21 +62,21 @@ public class Odometry implements GivesPosition {
         //average vertical translation
         double vertTransNet = average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
             wheel.distanceTraveledTowardsAngle(
-                    wheel.getDeltaPosition(), facingForward));
+                    wheel.getDeltaDistance(), facingForward));
 
 
         //average horizontal translation
         double horoTransNet =
         average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
             wheel.distanceTraveledTowardsAngle(
-                    wheel.getDeltaPosition(), facingRight));
+                    wheel.getDeltaDistance(), facingRight));
 
 
         //average rotation
         double rotAngNet = average.ofAll(wheels, (Consumer<OdometryWheel>) wheel ->
             average.add(
                 wheel.odoDeltaToBotAngle(
-                    wheel.getDeltaPosition()
+                    wheel.getDeltaDistance()
                         - wheel.dotProduct(horoTransNet, facingRight)
                         - wheel.dotProduct(vertTransNet, facingForward),
                     xCenterOfRotation, yCenterOfRotation),
