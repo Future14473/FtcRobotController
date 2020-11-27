@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 
 import java.util.List;
 
-public class OdometryThatusesIMUforHeading extends Odometry implements GivesPosition {
+public class OdometryThatusesIMUforHeading extends Odometry{
 
     Telemetry telemetry;
 

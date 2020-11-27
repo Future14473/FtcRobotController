@@ -46,7 +46,7 @@ public abstract class OdometryWheel {
         return deltaTicks;
     }
 
-    public double getDeltaPosition(){
+    public double getDeltaDistance(){
         // theta * radians = arc length
         totalDistTravelled += getDeltaTicks() / ticksPerRev() * radius() * 2.0 * Math.PI;
         return getDeltaTicks() / ticksPerRev() * radius() * 2 * Math.PI;

@@ -63,9 +63,9 @@ public class OdoSingleWheelTest extends OpMode
         double prevDist = wheel.getCurrentPosition();
 
         odowheel.updateDelta();
-        odowheel.getDeltaPosition();
+        odowheel.getDeltaDistance();
         odowheel2.updateDelta();
-        odowheel2.getDeltaPosition();
+        odowheel2.getDeltaDistance();
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "WheelHoriz Position: " + String.format("%d", wheel.getCurrentPosition()));
