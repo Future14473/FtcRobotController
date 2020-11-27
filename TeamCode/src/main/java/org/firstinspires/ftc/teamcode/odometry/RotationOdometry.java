@@ -41,13 +41,15 @@ public class RotationOdometry extends Odometry {
         //average vertical translation
         double vertTrans = average.ofAll(wheels, (Function<OdometryWheel, Double>) wheel ->
                 // distance travelled vertically (w/o taking in account rotation)
-                wheel.distanceTraveledTowardsAngle(wheel.getDeltaDistance(), facingForward)
-                // subtract the amount travelled due to rotation
-                - wheel.dotProduct(
-                        // length of sector travelled
-                        wheel.distanceToCenter() * rotDelta,
-                        // direction of travel
-                        wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)
+                wheel.distanceTraveledTowardsAngle(
+                    // subtract the amount spun due to rotation
+                    wheel.getDeltaDistance() - wheel.dotProduct(
+                            // length of sector travelled
+                            wheel.distanceToCenter() * rotDelta,
+                            // direction of travel
+                            wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)
+                    ),
+                    facingRight
                 )
         );
 
