@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.pathgen;
 public class ImportPath {
     // add a bunch of points to a path
 
-
+    static Path path;
 
     public static Path getPath() {
-        Path path = new Path();
+        path = new Path();
 
         path.add(getOrigin());
         path.add(getRingStartPos());
@@ -22,6 +22,8 @@ public class ImportPath {
     public static PathPoint getRingStartPos(){
         return new PathPoint(0,30,0);
     }
+
+
 
 
 //        String stringPath = Paths.getDefaultPath("default");
