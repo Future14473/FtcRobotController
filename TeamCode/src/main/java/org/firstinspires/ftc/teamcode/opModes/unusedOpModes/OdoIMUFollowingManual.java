@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unusedOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,7 +29,7 @@ public class OdoIMUFollowingManual extends LinearOpMode {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
         odometry = GiveTheDefaultConfiguration.defaultConfiguration(hardwareMap,imu,telemetry);
-        Follower pathFollower = new Follower(mecanum, odometry, telemetry);
+        Follower pathFollower = new Follower(mecanum, odometry, imu,telemetry);
 
 
         waitForStart();

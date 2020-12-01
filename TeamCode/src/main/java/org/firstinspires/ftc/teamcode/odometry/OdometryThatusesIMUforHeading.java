@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 import org.firstinspires.ftc.teamcode.utility.point;
@@ -9,11 +8,12 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 
 import java.util.List;
 
-public class OdometryThatusesIMUforHeading extends Odometry{
+public class OdometryThatusesIMUforHeading extends Odometry {
 
     Telemetry telemetry;
 
-    IMU imu;
+    // keep public so we can turn using only gyro
+    public IMU imu;
     double prevAngle = 0;
 
     protected void loop() {

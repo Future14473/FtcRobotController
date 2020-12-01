@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.pathFollow.Follower;
 import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
@@ -22,10 +23,12 @@ public class VuforiaSeek extends LinearOpMode
     VuMarkNav vumark;
     Mecanum drivetrain;
     Follower pathFollower;
+    IMU imu;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
+        imu = new IMU(hardwareMap,telemetry);
         vumark = new VuMarkNav(hardwareMap, telemetry);
         drivetrain = new Mecanum(hardwareMap);
         // Tell the driver that initialization is complete.
@@ -36,7 +39,7 @@ public class VuforiaSeek extends LinearOpMode
 
         vumark.activate();
         runtime.reset();
-        pathFollower = new Follower(drivetrain, vumark, pathString, telemetry);
+        pathFollower = new Follower(drivetrain, vumark, imu, telemetry);
 
         while (opModeIsActive()){
             telemetry.addData("Destination: ", pathFollower.targetPose);

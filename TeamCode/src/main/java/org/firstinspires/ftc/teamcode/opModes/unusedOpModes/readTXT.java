@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unusedOpModes;
 
 import android.os.Environment;
 import android.util.Log;
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
+
 import org.firstinspires.ftc.teamcode.pathgen.Path;
 import org.firstinspires.ftc.teamcode.utility.ReadFromFile;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
 // trying to get it to work, actually makes more sense to do it in java, read from file
 // is very finicky with getting the path
 @TeleOp(name="Read TXT", group="Autonomous")
-//@Disabled
+@Disabled
 public class readTXT extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,11 +38,11 @@ public class readTXT extends LinearOpMode {
         Log.d("Output value", output);
         */
 
-        Path path = ImportPath.getPath("default");
-        Log.d("path", String.valueOf(path));
-        waitForStart();
-        while (opModeIsActive()){
+//        Path path = ImportPath.getPath("default");
+//        Log.d("path", String.valueOf(path));
+//        waitForStart();
+//        while (opModeIsActive()){
 
-        }
+//        }
     }
 }
