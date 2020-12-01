@@ -2,19 +2,25 @@ package org.firstinspires.ftc.teamcode.pathgen;
 
 public class ImportPath {
     // add a bunch of points to a path
+
+
+
     public static Path getPath() {
         Path path = new Path();
 
         path.add(getOrigin());
+        path.add(getRingStartPos());
 
 
         return path;
     }
 
     public static PathPoint getOrigin(){
-        PathPoint origin = new PathPoint(0,0);
-        origin.dir = Math.PI/2;
-        return origin;
+        return new PathPoint(0,0, 0);
+    }
+
+    public static PathPoint getRingStartPos(){
+        return new PathPoint(0,30,0);
     }
 
 

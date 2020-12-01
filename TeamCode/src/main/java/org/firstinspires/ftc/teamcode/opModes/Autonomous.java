@@ -9,17 +9,18 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.GiveTheDefaultConfiguration;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.pathFollow.Follower;
+import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
-@TeleOp(name="2 Odometry + IMU Following", group="Autonomous")
+@TeleOp(name="Autonomous", group="Autonomous")
 public class Autonomous extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;
-    DcMotor vertical;
-    DcMotor horizontal;
+    DcMotor intake;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,9 +36,12 @@ public class Autonomous extends LinearOpMode {
         odometry.start();
         follower.start();
 
+
         while (opModeIsActive()){
-            mecanum.drive(gamepad1.right_stick_x/3, -gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
-            //telemetry.update();
+            if (follower.targetPose == ImportPath.getRingStartPos()){
+                intake.setPower(1.0);
+            }
+            telemetry.update();
         }
 
         follower.stop();

@@ -25,6 +25,11 @@ public class PathPoint extends point {
         super(x, y);
     }
 
+    public PathPoint(double x, double y, double dir){
+        super(x,y);
+        this.dir = dir;
+    }
+
     public double ang(){
 
         double prevAng = angTo(prev);
