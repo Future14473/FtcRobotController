@@ -36,7 +36,7 @@ public class Autonomous extends LinearOpMode {
         odometry.start();
         follower.start();
 
-
+    // TODO use rotation odometry and check to see that localization works
         while (opModeIsActive()){
             if (follower.targetPose == ImportPath.getRingStartPos()){
                 intake.setPower(1.0);
