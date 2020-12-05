@@ -59,8 +59,8 @@ public class BaseDrive extends OpMode
     public void loop() {
         // stop when no one is touching anything
 
-        double y = gamepad1.right_stick_y;
-        double x = -gamepad1.right_stick_x;
+        double y = -gamepad1.right_stick_y;
+        double x = gamepad1.right_stick_x;
         double turn = gamepad1.left_stick_x;
         double intakeOut = gamepad1.right_trigger;
         double intakeIn = -gamepad1.left_trigger;
