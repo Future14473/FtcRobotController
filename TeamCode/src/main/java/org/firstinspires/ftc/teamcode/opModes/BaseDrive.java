@@ -8,8 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-
+import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 
 
 @TeleOp(name="BaseDrive", group="Iterative Opmode")
@@ -21,6 +22,7 @@ public class BaseDrive extends OpMode
     Mecanum MecanumDrive;
     DcMotor intake;
     DcMotor taco;
+    IMU imu;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -61,7 +63,9 @@ public class BaseDrive extends OpMode
 
         double y = -gamepad1.right_stick_y;
         double x = gamepad1.right_stick_x;
-        double turn = gamepad1.left_stick_x;
+        double targetDir = -Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x) - Math.PI/2;
+        double magnitude = Math.hypot(gamepad1.left_stick_y,gamepad1.left_stick_x);
+        double turnPwr = RotationUtil.turnLeftOrRight(imu.getHeading(), targetDir, Math.PI * 2);
         double intakeOut = gamepad1.right_trigger;
         double intakeIn = -gamepad1.left_trigger;
 
@@ -74,7 +78,8 @@ public class BaseDrive extends OpMode
 //            intake.setPower(intakeOut);
 //        }
 
-        MecanumDrive.drive(x,y,turn/2);
+        MecanumDrive.drive(x/3, y/3,
+                (magnitude > 0.5 && Math.abs(turnPwr) > 0.08)? turnPwr:0);
 
 
         // Show the elapsed game time and wheel power.
