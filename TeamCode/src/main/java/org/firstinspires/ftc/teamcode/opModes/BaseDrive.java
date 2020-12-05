@@ -85,7 +85,7 @@ public class BaseDrive extends OpMode
 //            intake.setPower(intakeOut);
 //        }
 
-        int shooterPosition = shooter.getCurrentPosition()
+        int shooterPosition = shooter.getCurrentPosition();
         if (gamepad1.dpad_up){ // moves the target position 10 up
             shooter.setTargetPosition(
                     shooterPosition + 10

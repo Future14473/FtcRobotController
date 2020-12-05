@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.utility.pose;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -8,37 +9,43 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
+
+import static org.firstinspires.ftc.teamcode.utility.Timing.delay;
 import static org.opencv.imgproc.Imgproc.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Detection extends OpenCvPipeline {
 
+    // Variables for rings
     public static final double DISKR = 0.2;
     public static final double DMAXR = DISKR * 1.7;
-    public static final double DMINR = DISKR * 0.5;
+    public static final double DMINR = DISKR * 0.7;
 
+    // Variables for wobble goal
     public static final double STICKR = 9;
     public static final double SMAXR = STICKR * 1.2;
     public static final double SMINR = STICKR * 0.8;
 
-    public static final int CURVE_EXTENSION = 5;
-
+    // Variables for camera view -> Distance
     public static final double x0 = 20;
-    public static final double y0 = 30;
+    public static final double z0 = 30;
     public static final int yP = 720;
     public static final int xP = 960;
-    public static final double theta0 = Math.atan(y0/x0);
+    public static final double theta0 = Math.atan(z0/x0);
     public static final double viewAngle = Math.PI - 2* theta0;
     public static final double realX0 = 35;
     public static final double slope = 0.46;
 
+    public static final long iterativeConst = 1;
+
     Point objPosition = new Point();
 
     ArrayList<double[]> wobbles = new ArrayList<>();
-    int wobbleIterations = 100;
+    int wobbleIterations = 10;
 
     Mat formatted = new Mat();
     Mat resized = new Mat();
@@ -46,39 +53,44 @@ public class Detection extends OpenCvPipeline {
     Mat threshold = new Mat();
     Mat subthreshold = new Mat();
     Mat submat = new Mat();
+    Mat canvas = new Mat();
     int value = 0;
     int saturation = 0;
 
     Telemetry telemetry;
     Odometry odometry;
+    Mecanum MecanumDrive;
     Mat output;
 
-    public Detection(Telemetry t, Odometry odometry){
+    public Detection(Telemetry t, Odometry odometry, Mecanum MecanumDrive){
         this.telemetry = t;
         this.odometry = odometry;
+        this.MecanumDrive = MecanumDrive;
+    }
+    public Detection(Telemetry t){
+        this.telemetry = t;
     }
 
     @Override
     public Mat processFrame(Mat input){
         formatted = picSetup(input);
-        resized = picSetupNoFlip(input);
+        Mat noFlip = picSetupNoFlip(input);
 
         if(wobbleIterations < 0){
             return formatted;
         }
-        Mat threshold = new Mat();
-        output = find_blues(formatted);
 
-        //output = markWobble(formatted, find_wobble(resized, "blue"));
+        output = markWobble(noFlip, find_wobble(formatted, "blue"));
         wobbleIterations--;
         return output;
     }
 
-
+    // Setting up the picture to have a height of 960 pix and recoloring to BGR
+    // Updates the avgValues
     public Mat picSetup(Mat input) {
         Mat recolored = new Mat();
         cvtColor(input, recolored, COLOR_RGB2BGR);
-        Mat resized = new Mat();
+        resized = new Mat();
         double scale = 960.0/input.height();
         Imgproc.resize(recolored, resized, new Size(Math.round(input.width() * scale), Math.round(input.height() * scale)));
         recolored.release();
@@ -86,56 +98,73 @@ public class Detection extends OpenCvPipeline {
         return resized;
     }
 
+    // Resizes image to height 960 pix
     public Mat picSetupNoFlip(Mat input) {
-        Mat resized = new Mat();
+        resized = new Mat();
         double scale = 960.0/input.height();
         Imgproc.resize(input, resized, new Size(Math.round(input.width() * scale), Math.round(input.height() * scale)));
         recolored.release();
         return resized;
     }
+
+    // Creates a new Mat object converted from BGR to HSV
     public Mat copyHSV(Mat input){
         cvtColor(input, recolored, COLOR_BGR2HSV);
         return recolored;
     }
 
+    // Creates Arrays with every 15 pixels and sorts them to find the median
+    // for HSV Value and Saturation
     public void avgValues(Mat input){
         Mat copy = copyHSV(input);
-        ArrayList<Integer> values = new ArrayList<>();
-        ArrayList<Integer> saturations = new ArrayList<>();
+        int[] values = new int[(int)(Math.ceil(input.width()/15.0) * Math.ceil(input.height()/15.0))];
+        int[] saturations = new int[(int)(Math.ceil(input.width()/15.0) * Math.ceil(input.height()/15.0))];
+        int index = 0;
         for(int y = 0; y < input.height(); y+=15){
-            for(int x = 0; x < input.width(); x+=3){
-                values.add((Integer)(int)copy.get(y, x)[2]);
-                saturations.add((Integer)(int)copy.get(y, x)[1]);
+            for(int x = 0; x < input.width(); x+=15){
+                values[index] = (int)copy.get(y, x)[2];
+                saturations[index] = (int)copy.get(y, x)[1];
+                index++;
             }
         }
         copy.release();
-        Collections.sort(values);
-        Collections.sort(saturations);
-        int medVal = values.get((int)(values.size()/2));
-        int medSat = saturations.get((int)(saturations.size()/2));
+        Arrays.sort(values);
+        Arrays.sort(saturations);
+        int medVal = values[(int)(values.length/2)];
+        int medSat = saturations[(int)(saturations.length/2)];
+
+        // Equations derived by testing in different lighting
+        // and using linear regression to go from median values to target
         value = Math.max((int)(-0.65*medVal + 165.42), 0);
         saturation = Math.max((int)(1.19*medSat + 38.78), 0);
-        System.out.println(value + ", " + saturation);
     }
 
     public Mat find_yellows(Mat input){
         Mat copy = copyHSV(input);
         Core.inRange(copy, new Scalar(7, saturation, value), new Scalar(30, 255, 255), threshold);
+        copy.release();
         return threshold;
     }
 
     public Mat find_blues(Mat input){
         Mat copy = copyHSV(input);
         Core.inRange(copy, new Scalar(110, saturation, value), new Scalar(125, 255, 255), threshold);
+        copy.release();
         return threshold;
     }
     public Mat find_reds(Mat input){
         Mat copy = copyHSV(input);
         Core.inRange(copy, new Scalar(0, saturation, value), new Scalar(11, 255, 255), threshold);
+        copy.release();
         return threshold;
     }
 
-    public ArrayList<Rect> find_subcontours(Mat input, Rect main){
+    /*
+    Takes in roughly filtered contours and reprocesses
+    them to sort out the rings and seperate ring stacks
+    into individual rings
+     */
+    public ArrayList<Rect> find_subcontours(Mat input){
         subthreshold = find_yellows(input);
         Mat gray = new Mat();
         Mat grayblur = new Mat();
@@ -144,33 +173,51 @@ public class Detection extends OpenCvPipeline {
         Mat edges = new Mat();
         Mat sub = new Mat();
         Mat preFilter = input.clone();
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(CURVE_EXTENSION, 1));
+
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size((int)(input.width()/15.0), 1));
+        Mat kernelBig = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(3, 3));
 
         ArrayList<Rect> output = new ArrayList<>();
+
+        // Blurring a grayscale version of the input to create better edge detection results
         cvtColor(input, gray, COLOR_BGR2GRAY);
-        Imgproc.blur(gray, grayblur, new Size(7,7));
+        Imgproc.blur(gray, grayblur, new Size(3,3));
+
+        // Using different sobel derivatives and adding together
         Imgproc.Sobel(grayblur, edgesX, -1, 0, 1);
         Imgproc.Sobel(grayblur, edgesY, -1, 1, 0);
         Core.add(edgesX, edgesY, edges);
+
+        // Dilating to seperate the stacked objects even more
+        Imgproc.dilate(subthreshold, subthreshold, kernelBig);
+
+        // Subtracting the edges from the thesholded image to make edges clearer
         Core.subtract(subthreshold, edges, sub);
-        Core.inRange(sub, new Scalar(245, 245, 245), new Scalar(255, 255, 255), sub);
+
+        // Rethresholding to further accent the edges
+        Core.inRange(sub, new Scalar(200, 200, 200), new Scalar(255, 255, 255), sub);
+
+        // Eroding to remove small areas connecting seperated objects
         Imgproc.erode(sub, sub, kernel);
+
         List<MatOfPoint> contours = new ArrayList<>();
-
-
         Imgproc.findContours(sub, contours, new Mat(), Imgproc.CHAIN_APPROX_NONE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // Filtering out contours with wrong dimensions
         contours.removeIf(m -> {
             Rect rect = Imgproc.boundingRect(m);
             double r = (double) rect.height/rect.width;
-            return ((r > DMAXR) || (r < DMINR) || (rect.width < main.width * 0.82));
+            return ((r > DMAXR) || (r < DMINR) || (rect.width < input.width() * 0.7));
         });
-        for(int i = 0; i<contours.size();i++){
+
+        // Adding valid rings to the ouput
+        for(int i = 0; i<contours.size(); i++){
             MatOfPoint contour = contours.get(i);
             Rect rect = Imgproc.boundingRect(contour);
             Imgproc.rectangle(input, rect.tl(), rect.br(), new Scalar(0, 255, 255), 2);
             output.add(rect);
         }
+
         gray.release();
         grayblur.release();
         edgesX.release();
@@ -178,79 +225,58 @@ public class Detection extends OpenCvPipeline {
         edges.release();
         sub.release();
         preFilter.release();
+        kernel.release();
+        kernelBig.release();
 
         return output;
     }
 
-    public int closeIn(ArrayList<double[]> list, double x, double y, double width, double height, double epsilonW, double epsilonH){
-        for(int i = 0; i< list.size(); i++){
-            if(Math.abs(y - list.get(i)[4]) < epsilonH/2 && Math.abs(x - list.get(i)[1]) < epsilonW/2){
-                return -2;
-            }
-            if(Math.abs(list.get(i)[1] - x) < epsilonW && Math.abs(list.get(i)[2] - width) < epsilonW && Math.abs(list.get(i)[5] - height) < epsilonH){
-                return i;
-            }
-        }
-        return -1;
-    }
 
-    public ArrayList<double[]> find_rings(Mat input){
-        List<MatOfPoint> contours = new ArrayList<>();
-
+    public ArrayList<Stack> find_rings(Mat input){
         threshold = find_yellows(input);
+
+        List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(threshold, contours, new Mat(), Imgproc.CHAIN_APPROX_NONE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //initial filtering
+        //rough filtering
         contours.removeIf(m -> {
             Rect rect = Imgproc.boundingRect(m);
             return (rect.area() < 1500) || (rect.height > rect.width);
         });
 
-        //finding stacked rectangles and marking
-        ArrayList<double[]> rectsData= new ArrayList<>();
+        //Rings will be sorted into Stacks in rectsData
+        ArrayList<Stack> rectsData= new ArrayList<>();
 
         //sorting "rings" into stacks
-        for(int i = 0; i<contours.size();i++){
-            MatOfPoint contour = contours.get(i);
+        for(MatOfPoint contour:contours){
             Rect rect = Imgproc.boundingRect(contour);
-            int newX = (int)Math.max(rect.x - (rect.width*0.3), 0);
-            int newY = (int)Math.max(rect.y - (rect.height*0.1), 0);
-            int newW = (int)Math.min((rect.width*1.3) + rect.x, input.width()) - newX;
-            int newH = (int)Math.min((rect.height*1.1) + rect.y, input.height()) - newY;
-            submat = new Mat(input.clone(), new Rect(newX, newY, newW, newH));
-            ArrayList<Rect> moreRects = find_subcontours(submat, rect);
-            for(int j = 0; j< moreRects.size();j++){
-            Rect subrect = moreRects.get(j);
+
+            // creating bounding boxes for the found contours with some breathing room
+            int tempx = rect.x;
+            int tempy = rect.y;
+            rect.x = (int)Math.max(rect.x - (rect.width*0.1), 0);
+            rect.y = (int)Math.max(rect.y - (rect.height*0.1), 0);
+            rect.width = (int)Math.min((rect.width*1.1) + tempx, input.width()) - rect.x;
+            rect.height = (int)Math.min((rect.height*1.1) + tempy, input.height()) - rect.y;
+
+            submat = new Mat(input.clone(), rect);
+
+            // Putting the submat through a more refined filtering system
+            ArrayList<Rect> moreRects = find_subcontours(submat);
+            for(Rect subrect: moreRects){
                 double epsilonW = rect.width * 0.3;
                 double epsilonH = rect.height * 0.3;
-                subrect.x += newX;
-                subrect.y += newY;
-                int index = closeIn(rectsData, subrect.x, subrect.y, subrect.width, subrect.height, epsilonW, epsilonH);
+                subrect.x += rect.x;
+                subrect.y += rect.y;
+                int index = Stack.closeIn(rectsData, subrect, epsilonW, epsilonH);
                 if(index == -2){
                     System.out.println("Overlap");
                 }
                 else if(index == -1){
-                    rectsData.add(new double[6]);
-                    rectsData.get(rectsData.size() - 1)[0] = 1;
-                    rectsData.get(rectsData.size() - 1)[1] = subrect.x;
-                    rectsData.get(rectsData.size() - 1)[2] = subrect.width;
-                    rectsData.get(rectsData.size() - 1)[3] = subrect.y + subrect.height;
-                    rectsData.get(rectsData.size() - 1)[4] = subrect.y;
-                    rectsData.get(rectsData.size() - 1)[5] = subrect.height;
+                    rectsData.add(new Stack(subrect));
                 }
                 else{
-                    double occ = rectsData.get(index)[0];
-                    double avgX = rectsData.get(index)[1];
-                    double avgW = rectsData.get(index)[2];
-                    double maxY = rectsData.get(index)[3];
-                    double minY = rectsData.get(index)[4];
-                    double avgH = rectsData.get(index)[5];
-                    rectsData.get(index)[0] += 1;
-                    rectsData.get(index)[1] = (subrect.x + occ*avgX)/(occ + 1);
-                    rectsData.get(index)[2] = (subrect.width + occ*avgW)/(occ + 1);
-                    rectsData.get(index)[3] = Math.max(subrect.y + subrect.height, maxY);
-                    rectsData.get(index)[4] = Math.min(subrect.y, minY);
-                    rectsData.get(index)[5] = (subrect.height + occ*avgH)/(occ + 1);
+                    rectsData.get(index).addExisting(subrect);
                 }
             }
         }
@@ -282,6 +308,8 @@ public class Detection extends OpenCvPipeline {
 
     public Rect find_wobble(Mat input, String side){
         List<MatOfPoint> contours = new ArrayList<>();
+
+        // Choosing to use red or blue thresholding
         if(side.equals("blue")){
             threshold = find_blues(input);
         }
@@ -291,13 +319,16 @@ public class Detection extends OpenCvPipeline {
         else{
             System.out.println("ERROR: Not a valid side.");
         }
+
         Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(15, 15));
-        Mat kernelE = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(CURVE_EXTENSION, 1));
+        Mat kernelE = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size((int)(input.width()/250.0), 1));
+
+        // Dilating and eroding to produce smoother results with less noise
         Imgproc.dilate(threshold, threshold, kernel);
         Imgproc.erode(threshold, threshold, kernelE);
         Imgproc.findContours(threshold, contours, new Mat(), Imgproc.CHAIN_APPROX_NONE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //initial filtering
+        // rough filtering
         contours.removeIf(m -> {
             Rect rect = Imgproc.boundingRect(m);
             double r = (double) rect.height/rect.width;
@@ -316,6 +347,8 @@ public class Detection extends OpenCvPipeline {
         Rect maxRect = Imgproc.boundingRect(max);
         Rect finalRect = new Rect(maxRect.x, maxRect.y, maxRect.width, (int)Math.round(maxRect.height*(28.0/24)));
         addWobble(finalRect);
+        kernel.release();
+        kernelE.release();
         return finalRect;
     }
 
@@ -328,22 +361,17 @@ public class Detection extends OpenCvPipeline {
         if(y/x < 0){
             angle += Math.PI;
         }
-//        System.out.println("Angle: " + (Math.toDegrees(angle)));
-//        System.out.println("Y: " + y);
-//        System.out.println("X: " + x);
-//        System.out.println();
         return Math.toDegrees(angle);
     }
 
     public double pix2Y(double pixY){
         double angle = (yP - pixY)/yP * viewAngle;
-        return y0 * Math.tan(theta0 + angle) + x0;
+        return z0 * Math.tan(theta0 + angle) + x0;
     }
 
     public double pix2RealX(double pixX, double pixY){
         double y = pix2Y(pixY);
         double fullX = realX0 + y*slope;
-        // System.out.println("real x: " + fullX);
         return (pixX - xP/2.0)/(xP) * fullX;
     }
 
@@ -352,38 +380,51 @@ public class Detection extends OpenCvPipeline {
         double centerY = obj.y + obj.height;
         double y = pix2Y(centerY);
         double x = pix2RealX(centerX, centerY);
-//        System.out.println("Angle: " + (Math.toDegrees(angle)));
-//        System.out.println("Y: " + y);
-//        System.out.println("X: " + x);
-//        System.out.println();
         return new Point(x, y);
     }
 
 
-    public Mat markRings(Mat input, ArrayList<double[]> rectsData){
-        Mat copy = input.clone();
-        for(int i = 0; i < rectsData.size(); i++){
-        double[] data = rectsData.get(i);
-            if(data[0] > 0){
-                Rect rect = new Rect((int) data[1], (int) data[4], (int) data[2], (int) (data[3] - data[4]));
-                double Angle = find_Angle(rect);
-                Imgproc.rectangle(copy, rect.tl(), rect.br(), new Scalar(255, 255, 0), 2);
-                Imgproc.putText(copy, "" + (int)data[0], new Point(data[1] + data[2]/2, data[4]), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 255, 0), 2);
-                Imgproc.putText(copy, "Angle: " + (int)Angle, new Point(data[1] + data[2]/2, data[4] + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 255, 0), 2);
+    public Mat markRings(Mat input, ArrayList<Stack> rectsData){
+        canvas = input.clone();
+        for(Stack stack: rectsData){
+            if(stack.count > 0){
+                double Angle = find_Angle(stack.fullStack);
+                Imgproc.rectangle(canvas, stack.fullStack.tl(), stack.fullStack.br(), new Scalar(255, 255, 0), 2);
+                Imgproc.putText(canvas, "" + stack.count,
+                        new Point(stack.fullStack.x + 20, stack.fullStack.y - 50),
+                        Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 255, 0), 2);
+                //Imgproc.putText(copy, "Angle: " + (int)Angle, new Point(data[1] + data[2]/2, data[4] + 100),
+                // Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 255, 0), 2);
 
             }
         }
-        return copy;
+        return canvas;
+    }
+
+    public Point CountRingsToLocation(ArrayList<Stack> rectsData){
+        int maxCount = Collections.max(rectsData).count;
+        if(maxCount == 0){
+            return new Point();
+            // go to 0 ring location
+        }
+        else if(maxCount == 1){
+            return new Point();
+            // go to 1 ring location
+        }
+        else{
+            return new Point();
+            // go to 4 ring location
+        }
     }
 
     public Mat markWobble(Mat input, Rect rect){
         //labeling found wobble
-        Mat copy = input.clone();
+        canvas = input.clone();
         double Angle = find_Angle(rect);
-        Imgproc.rectangle(copy, rect.tl(), rect.br(), new Scalar(0, 255, 255), 2);
-        Imgproc.putText(copy, "Wobble Goal", new Point(rect.x, rect.y -100), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 0), 2);
-        Imgproc.putText(copy, "Angle: " + (int)Angle, new Point(rect.x, rect.y -50 ), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 255), 2);
-        return copy;
+        Imgproc.rectangle(canvas, rect.tl(), rect.br(), new Scalar(0, 255, 255), 2);
+        Imgproc.putText(canvas, "Wobble Goal", new Point(rect.x, rect.y -100), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 0), 2);
+        Imgproc.putText(canvas, "Angle: " + (int)Angle, new Point(rect.x, rect.y -50 ), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 255), 2);
+        return canvas;
     }
 
     public Point locateObj(Rect rect){
@@ -408,8 +449,8 @@ public class Detection extends OpenCvPipeline {
             }
         }
 
-        clearWobbles();
         double[] maxWobbleFinal = wobbles.get(maxWobblesI);
+        wobbles.clear();
         return new Point(maxWobbleFinal[1], maxWobbleFinal[2]);
     }
 
@@ -419,7 +460,7 @@ public class Detection extends OpenCvPipeline {
         for(int i = 0; i<wobbles.size(); i++){
             double[] wobble = wobbles.get(i);
             double dist = Math.hypot(rel.x - wobble[1], rel.y - wobble[2]);
-            if(dist < 15){
+            if(dist < 150){
                 wobble[1] = (wobble[0] * wobble[1] + rel.x)/(wobble[0] + 1);
                 wobble[2] = (wobble[0] * wobble[2] + rel.y)/(wobble[0] + 1);
                 wobble[0]++;
@@ -433,10 +474,26 @@ public class Detection extends OpenCvPipeline {
         }
     }
 
-    public void clearWobbles(){ wobbles.clear(); }
-
     public Point bestRing(ArrayList<double[]> rectsData){
         return new Point();
+    }
+
+    public int faceObjectInc(Point target){
+        int dx = ((int)target.x - yP/2);
+        int speed = 0;
+        if(dx > 20){
+            speed = 10;
+        }
+        else if(dx < -20){
+            speed = -10;
+        }
+        else{
+            dx = 0;
+        }
+        MecanumDrive.drive(0, 0, speed);
+        delay(dx * iterativeConst);
+        MecanumDrive.drive(0, 0, 0);
+        return dx;
     }
 
 }
