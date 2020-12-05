@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
 
-import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
 import org.firstinspires.ftc.teamcode.pathgen.Path;
 import org.firstinspires.ftc.teamcode.pathgen.PathPoint;
@@ -16,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utility.point;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 public class Follower {
-    public PathPoint targetPose;
+    public PathPoint target = new PathPoint(0,0,0);
     volatile boolean running = true;
 
     // constructor stuff
@@ -34,7 +33,7 @@ public class Follower {
         while (i < path.size() && running) {
 
             // get target position
-            PathPoint target = path.get(i);
+            target = path.get(i);
 
 
             // move to target
@@ -55,6 +54,7 @@ public class Follower {
 
         telemetry.addData("Odometry Position", odometry.getPosition());
         telemetry.addData("Done with path", "done");
+        stop();// keeps doing random things after done with path
         telemetry.update();
     });
 
@@ -77,8 +77,8 @@ public class Follower {
         // 2) because of (1), robot will jerk when it gets near a point
         //    So stop moving when close enough
 
-        double xVel = (Math.abs(diff.x)>1)?     (diff.x/50 + 0.1 * Math.signum(diff.x)):0;
-        double yVel = (Math.abs(diff.y)>1)?     (diff.y/50 + 0.1 * Math.signum(diff.y)):0;
+        double xVel = (Math.abs(diff.x)>1)?     (diff.x/200 + 0.1 * Math.signum(diff.x)):0;
+        double yVel = (Math.abs(diff.y)>1)?     (diff.y/200 + 0.1 * Math.signum(diff.y)):0;
         double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
 
         // if turning only use the gyro to increase accuracy

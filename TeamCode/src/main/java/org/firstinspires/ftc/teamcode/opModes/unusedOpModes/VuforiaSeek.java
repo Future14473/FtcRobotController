@@ -42,7 +42,7 @@ public class VuforiaSeek extends LinearOpMode
         pathFollower = new Follower(drivetrain, vumark, imu, telemetry);
 
         while (opModeIsActive()){
-            telemetry.addData("Destination: ", pathFollower.targetPose);
+            telemetry.addData("Destination: ", pathFollower.target);
             telemetry.addData("Current Position: ", vumark.getPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
         }

@@ -30,6 +30,10 @@ public class PathPoint extends point {
         this.dir = dir;
     }
 
+    public boolean isSame(PathPoint other){
+        return other.x == x && other.y == y && other.dir == dir;
+    }
+
     public double ang(){
 
         double prevAng = angTo(prev);
