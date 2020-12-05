@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.pathgen;
 
 public class ImportPath {
-    // add a bunch of points to a path
+    static double yTile = 60.96;
+    static double xTile = -yTile; // negative because of the half of the field we are using
 
+    // add a bunch of points to a path
     static Path path;
 
     public static Path getPath() {
@@ -15,13 +17,25 @@ public class ImportPath {
         return path;
     }
 
+    // 1 ft to cm = 30.48cm
+    // 2ft to 60.96
     public static PathPoint getOrigin(){
-        return new PathPoint(0,0, 0);
+        return new PathPoint(xTile,0, 0);
     }
 
     public static PathPoint getRingStartPos(){
-        return new PathPoint(0,30,0);
+        return new PathPoint(xTile * 1.5, yTile * 2,0);
     }
+
+    public static PathPoint getTargetA(){ return new PathPoint(xTile * 3, yTile * 3.5,0); }
+
+    public static PathPoint getTargetB(){ return new PathPoint(xTile * 2, yTile * 4.5,0); }
+
+
+
+
+
+
 
 
 

@@ -20,4 +20,5 @@ public class DriveWheelOdometryWheel extends OdometryWheel{
     public long getWheelTicks() {
         return wheel.getCurrentPosition();
     }
+    // values from getWheelTicks are off by 2 for some reason
 }

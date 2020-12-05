@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pathFollow;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
@@ -42,6 +44,8 @@ public class Follower {
             if (reached)
                 i++;
 
+            Log.d("Destination", String.format("%.1f %.1f %.1f", target.x, target.y, target.dir));
+            Log.d("Odometry Position", odometry.getPosition().toString());
             telemetry.addData("Destination", String.format("%.1f %.1f %.1f", target.x, target.y, target.dir));
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.update();
@@ -73,8 +77,8 @@ public class Follower {
         // 2) because of (1), robot will jerk when it gets near a point
         //    So stop moving when close enough
 
-        double xVel = (Math.abs(diff.x)>1)?     (diff.x/20 + 0.1 * Math.signum(diff.x)):0;
-        double yVel = (Math.abs(diff.y)>1)?     (diff.y/20 + 0.1 * Math.signum(diff.y)):0;
+        double xVel = (Math.abs(diff.x)>1)?     (diff.x/50 + 0.1 * Math.signum(diff.x)):0;
+        double yVel = (Math.abs(diff.y)>1)?     (diff.y/50 + 0.1 * Math.signum(diff.y)):0;
         double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
 
         // if turning only use the gyro to increase accuracy
@@ -88,7 +92,9 @@ public class Follower {
         // because we're doing big motion, the robot tends to overshoot
         drivetrain.drive(xVel, yVel, rVel);
 
-        telemetry.addData("intention", diff);
+        telemetry.addData("To Point Amount", diff);
+        Log.d("To Point Amount", diff.toString());
+        Log.d("___________________________","_____________________");
 
         // return true if reached point
         return (xVel == 0 && yVel == 0 && rVel == 0);

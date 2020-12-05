@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,7 +34,7 @@ public class Autonomous extends LinearOpMode {
 
         waitForStart();
 
-        odometry.setPosition(new pose(0,0,0));
+
         odometry.start();
         follower.start();
 
@@ -40,6 +42,7 @@ public class Autonomous extends LinearOpMode {
         while (opModeIsActive()){
             if (follower.targetPose == ImportPath.getRingStartPos()){
                 intake.setPower(1.0);
+                Log.d("Intake on", "true");
             }
             telemetry.update();
         }
