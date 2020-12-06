@@ -59,13 +59,17 @@ public class WebcamTest extends LinearOpMode {
         odometry.start();
 
         while(opModeIsActive()){
-            follower.goTowards(new PathPoint(0, 0, ));
+            double angle = detector.jankAngle(detector.bestWobble());
+            follower.goTowards(new PathPoint(0, 0, angle));
+            telemetry.addData("Angle", angle);
+            telemetry.update();
 
         }
 
 
         wait(10000);
         webcam.stopStreaming();
+        odometry.end();
     }
 
 

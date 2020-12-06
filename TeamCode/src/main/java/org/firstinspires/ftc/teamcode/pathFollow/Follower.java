@@ -59,7 +59,7 @@ public class Follower {
     });
 
     //return true if dest reached
-    boolean goTowards(PathPoint dest){
+    public boolean goTowards(PathPoint dest){
 
         pose position = odometry.getPosition();
 

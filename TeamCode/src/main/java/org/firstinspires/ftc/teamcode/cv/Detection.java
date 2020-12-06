@@ -508,8 +508,8 @@ public class Detection extends OpenCvPipeline {
         return dx;
     }
 
-    public int jankAngle(Point target){
-        return (int)target.x/960*70;
+    public double jankAngle(Point target){
+        return Math.toRadians(target.x/960*70);
     }
 
 }
