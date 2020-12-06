@@ -60,9 +60,11 @@ public class WebcamTest extends LinearOpMode {
 
         while(opModeIsActive()){
             double angle = detector.jankAngle(detector.bestWobble());
-            follower.goTowards(new PathPoint(0, 0, angle));
+
             telemetry.addData("Angle", angle);
             telemetry.update();
+            follower.goTowards(new PathPoint(0, 0, angle));
+
 
         }
 

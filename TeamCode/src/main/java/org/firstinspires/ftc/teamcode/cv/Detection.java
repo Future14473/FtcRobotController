@@ -56,6 +56,7 @@ public class Detection extends OpenCvPipeline {
     Mat canvas = new Mat();
     int value = 0;
     int saturation = 0;
+    int stack;
 
     Telemetry telemetry;
     Odometry odometry;
@@ -82,9 +83,9 @@ public class Detection extends OpenCvPipeline {
             return input;
         }
 
-        output = markWobble(input, find_wobble(formatted, "blue"));
+        stack = CountRings(find_rings(formatted));
 //        wobbleIterations--;
-        return output;
+        return input;
     }
 //    public Mat makeSkinny(Mat input){
 //        System.out.println("ree");
@@ -406,19 +407,16 @@ public class Detection extends OpenCvPipeline {
         return canvas;
     }
 
-    public Point CountRingsToLocation(ArrayList<Stack> rectsData){
+    public int CountRings(ArrayList<Stack> rectsData){
         int maxCount = Collections.max(rectsData).count;
         if(maxCount == 0){
-            return new Point();
-            // go to 0 ring location
+            return 0;
         }
         else if(maxCount == 1){
-            return new Point();
-            // go to 1 ring location
+            return 1;
         }
         else{
-            return new Point();
-            // go to 4 ring location
+            return 4;
         }
     }
 
@@ -509,7 +507,9 @@ public class Detection extends OpenCvPipeline {
     }
 
     public double jankAngle(Point target){
-        return Math.toRadians(target.x/960*70);
+        telemetry.addData("targetX", target.x);
+        telemetry.update();
+        return Math.toRadians(target.x/960.0*70);
     }
 
 }
