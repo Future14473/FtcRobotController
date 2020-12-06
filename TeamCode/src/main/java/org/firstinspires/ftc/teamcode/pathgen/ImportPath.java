@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.pathgen;
 
 public class ImportPath {
+    static double centerOffset = 22.86;
     static double yTile = 60.96;
     static double xTile = -yTile; // negative because of the half of the field we are using
 
-    // add a bunch of points to a path
+    public static PathPoint origin = new PathPoint(xTile,0 + centerOffset, 0);
+    public static PathPoint ringStack = new PathPoint(xTile * 1.5, centerOffset + yTile * 2,0);
+    public static PathPoint targetA = new PathPoint(xTile * 2, centerOffset + yTile* 3.5,0);
+    public static PathPoint targetB = new PathPoint(xTile * 2,  centerOffset + yTile * 4.5,0);
+
+
     static Path path;
 
     public static Path getPath() {

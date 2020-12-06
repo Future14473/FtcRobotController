@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 
 
-@TeleOp(name="BaseDrive", group="Teleop")
+@TeleOp(name="Teleop", group="Teleop")
 //@Disabled
 //use DriveWheelIMULocalization for the same functionality instead
 public class Teleop extends LinearOpMode
@@ -25,6 +27,7 @@ public class Teleop extends LinearOpMode
     DcMotor shooter_adjuster;
     DcMotor shooter;
     CRServo gate;
+    Servo wobArm, wobGrip;
     IMU imu;
 
     public void runOpMode() throws InterruptedException {
@@ -36,15 +39,19 @@ public class Teleop extends LinearOpMode
         intake = hardwareMap.get(DcMotor.class, "intake");
         taco = hardwareMap.get(DcMotor.class, "taco");
         gate = hardwareMap.get(CRServo.class, "gate");
+        wobArm = hardwareMap.get(Servo.class, "wobArm");
+        wobGrip = hardwareMap.get(Servo.class, "wobGrip");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
         shooter_adjuster = hardwareMap.get(DcMotor.class, "shooter_adjuster");
-        //shooter_adjuster.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //shooter_adjuster.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter_adjuster.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter_adjuster.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         telemetry.addData("Status", "Initialized");
 
         waitForStart();
+
+
         while (opModeIsActive()){
 
         double y = -gamepad1.right_stick_y;
@@ -72,21 +79,28 @@ public class Teleop extends LinearOpMode
         shooter.setPower( (gamepad1.dpad_left?-0.5:0.5) + (gamepad1.dpad_right?0.5:-0.5) );
 
         // shooter gate
-        gate.setPower(0);
-        if (gamepad1.x){
-            gate.setPower(1);
-        } else if (gamepad1.y){
-            gate.setPower(-1);
+//        gate.setPower(0);
+//        if (gamepad1.x){
+//            gate.setPower(1);
+//        } else if (gamepad1.y){
+//            gate.setPower(-1);
+//        }
+
+        if (gamepad1.a){
+            wobArm.setPosition(1.0);
+            wobGrip.setPosition(0);
         }
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Shooter Adjuster: ", shooter_adjuster.getCurrentPosition());
+        Log.e("Shooter Adjuster: ", String.valueOf( shooter_adjuster.getCurrentPosition()));
         telemetry.addData("Trigger Right: ", intakeIn);
     }
 
 
 
-}}
+}
+}
 
 
 

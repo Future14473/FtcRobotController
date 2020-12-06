@@ -85,7 +85,6 @@ public class Follower {
         if (dest.x == 0 && dest.y == 0){
             double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
             drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.08)? rDirection:0);
-            telemetry.addData("THis loop in gyro", "yes");
             return (rVel == 0);
         }
 
