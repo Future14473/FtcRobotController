@@ -63,8 +63,13 @@ public class Follower {
 
     public void goTo(PathPoint dest){
         while (!isArrived(dest) && opmode.opModeIsActive()){
+            Log.e("Odometry Position: ", odometry.getPosition().toString());
+            Log.e("Destiny: ", String.format("%.1f %.1f %.1f", dest.x, dest.y, dest.dir));
             // keep going to the point
         }
+        Log.e("Done with PAth: ", "true");
+        Log.e("______________________________________________________ ", "______________________________________________________");
+        telemetry.addData("Done with PAth: ", "true");
     }
     //return true if dest reached
     boolean isArrived(PathPoint dest){
@@ -79,14 +84,16 @@ public class Follower {
         diff.x = intrinsic.x;
         diff.y = intrinsic.y;
 
+        Log.e("diff: ", String.format("%.1f %.1f %.1f",diff.x,diff.y,diff.r));
+
         // To consider:
         // 1) speeds below 0.1 cannot overcome static friction of drivetrain
         //    Therefore, all speeds below 0.1 will be rounded up to 0.1
         // 2) because of (1), robot will jerk when it gets near a point
         //    So stop moving when close enough
 
-        double xVel = (Math.abs(diff.x)>1)?     (diff.x/200 + 0.1 * Math.signum(diff.x)):0;
-        double yVel = (Math.abs(diff.y)>1)?     (diff.y/200 + 0.1 * Math.signum(diff.y)):0;
+        double xVel = (Math.abs(diff.x)>2)?     (diff.x/200 + 0.1 * Math.signum(diff.x)):0;
+        double yVel = (Math.abs(diff.y)>2)?     (diff.y/200 + 0.1 * Math.signum(diff.y)):0;
         double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
 
         // if turning only use the gyro to increase accuracy

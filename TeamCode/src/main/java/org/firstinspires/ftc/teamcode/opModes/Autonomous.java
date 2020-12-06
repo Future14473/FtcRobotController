@@ -44,15 +44,18 @@ public class Autonomous extends LinearOpMode {
 
     // TODO use rotation odometry and check to see that localization works
         while (opModeIsActive()){
-            intake.setPower(1.0);
+//            intake.setPower(1.0); // build needs to fix the intake
 
-
-            follower.goTo(ImportPath.ringStack0);
+//            follower.goTo(ImportPath.test);
+//            follower.goTo(ImportPath.ringStack01);
+            follower.goTo(ImportPath.ringStack02);
             follower.goTo(ImportPath.ringStack1);
+            intake.setPower(0);
+            follower.goTo(ImportPath.targetA0);
+            follower.goTo(ImportPath.targetA1);
+            follower.goTo(ImportPath.targetA);
 
 
-            Log.d("Odometry Position: ", odometry.getPosition().toString());
-            Log.d("Destiny: ", String.format("%.1f %.1f %.1f", follower.target.x,follower.target.y, follower.target.dir));
             telemetry.update();
         }
 
