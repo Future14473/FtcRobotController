@@ -28,7 +28,7 @@ public class Detection extends OpenCvPipeline {
     // Variables for wobble goal
     public static final double STICKR = 9;
     public static final double SMAXR = STICKR * 1.2;
-    public static final double SMINR = STICKR * 0.8;
+    public static final double SMINR = STICKR * 0.5;
 
     // Variables for camera view -> Distance
     public static final double x0 = 20;
@@ -67,6 +67,10 @@ public class Detection extends OpenCvPipeline {
         this.odometry = odometry;
         this.MecanumDrive = MecanumDrive;
     }
+    public Detection(Telemetry t, Mecanum MecanumDrive){
+        this.telemetry = t;
+        this.MecanumDrive = MecanumDrive;
+    }
     public Detection(Telemetry t){
         this.telemetry = t;
     }
@@ -74,16 +78,17 @@ public class Detection extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input){
         formatted = picSetup(input);
-        Mat noFlip = picSetupNoFlip(input);
-
         if(wobbleIterations < 0){
-            return formatted;
+            return input;
         }
 
-        output = markWobble(noFlip, find_wobble(formatted, "blue"));
-        wobbleIterations--;
+        output = markWobble(input, find_wobble(formatted, "blue"));
+//        wobbleIterations--;
         return output;
     }
+//    public Mat makeSkinny(Mat input){
+//        System.out.println("ree");
+//    }
 
     // Setting up the picture to have a height of 960 pix and recoloring to BGR
     // Updates the avgValues
@@ -320,7 +325,7 @@ public class Detection extends OpenCvPipeline {
             System.out.println("ERROR: Not a valid side.");
         }
 
-        Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(15, 15));
+        Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(20, 20));
         Mat kernelE = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size((int)(input.width()/250.0), 1));
 
         // Dilating and eroding to produce smoother results with less noise
@@ -439,6 +444,9 @@ public class Detection extends OpenCvPipeline {
 
 
     public Point bestWobble(){
+        if(wobbles.isEmpty()){
+            return new Point(0, 0);
+        }
         int maxWobblesI = 0;
         double maxWobbles = 0;
         for(int i = 0; i<wobbles.size(); i++){
@@ -451,6 +459,9 @@ public class Detection extends OpenCvPipeline {
 
         double[] maxWobbleFinal = wobbles.get(maxWobblesI);
         wobbles.clear();
+        telemetry.addData("Best Wobble: ", new Point(maxWobbleFinal[1], maxWobbleFinal[2]));
+        telemetry.update();
+
         return new Point(maxWobbleFinal[1], maxWobbleFinal[2]);
     }
 
@@ -480,20 +491,25 @@ public class Detection extends OpenCvPipeline {
 
     public int faceObjectInc(Point target){
         int dx = ((int)target.x - yP/2);
-        int speed = 0;
+        double speed = 0;
         if(dx > 20){
-            speed = 10;
+            speed = 0.2;
         }
         else if(dx < -20){
-            speed = -10;
+            speed = -0.2;
         }
         else{
             dx = 0;
         }
         MecanumDrive.drive(0, 0, speed);
-        delay(dx * iterativeConst);
+        //delay(dx * iterativeConst);
+        delay(50);
         MecanumDrive.drive(0, 0, 0);
         return dx;
+    }
+
+    public int jankAngle(Point target){
+        return (int)target.x/960*70;
     }
 
 }
