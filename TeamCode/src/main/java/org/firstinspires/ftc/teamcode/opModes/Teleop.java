@@ -26,7 +26,7 @@ public class Teleop extends LinearOpMode
     DcMotor taco;
     DcMotor shooter_adjuster;
     DcMotor shooter;
-    CRServo gate;
+//    CRServo gate;
     Servo wobArm, wobGrip;
     IMU imu;
 
@@ -38,7 +38,7 @@ public class Teleop extends LinearOpMode
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         taco = hardwareMap.get(DcMotor.class, "taco");
-        gate = hardwareMap.get(CRServo.class, "gate");
+//        gate = hardwareMap.get(CRServo.class, "gate");
         wobArm = hardwareMap.get(Servo.class, "wobArm");
         wobGrip = hardwareMap.get(Servo.class, "wobGrip");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
@@ -87,8 +87,9 @@ public class Teleop extends LinearOpMode
 //        }
 
         if (gamepad1.a){
-            wobArm.setPosition(1.0);
-            wobGrip.setPosition(0);
+//            wobArm.setPosition(0.0);
+//            wobGrip.setPosition(0.5);
+
         }
 
         // Show the elapsed game time and wheel power.

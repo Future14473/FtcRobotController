@@ -6,8 +6,10 @@ public class ImportPath {
     static double xTile = -yTile; // negative because of the half of the field we are using
 
     public static PathPoint origin = new PathPoint(xTile,0 + centerOffset, 0);
-    public static PathPoint ringStack = new PathPoint(xTile * 1.5, centerOffset + yTile * 2,0);
-    public static PathPoint targetA = new PathPoint(xTile * 2, centerOffset + yTile* 3.5,0);
+
+    public static PathPoint ringStack0 = new PathPoint(xTile * 1.15, centerOffset + (yTile * 1),0);
+    public static PathPoint ringStack1 = new PathPoint(xTile * 1.5, centerOffset + (yTile * 2),0);
+    public static PathPoint targetA = new PathPoint(xTile * 2, centerOffset + yTile* 3.5,-Math.PI/2);
     public static PathPoint targetB = new PathPoint(xTile * 2,  centerOffset + yTile * 4.5,0);
 
 
@@ -16,8 +18,8 @@ public class ImportPath {
     public static Path getPath() {
         path = new Path();
 
-        path.add(getOrigin());
-        path.add(getRingStartPos());
+        path.add(origin);
+        path.add(ringStack1);
 
 
         return path;

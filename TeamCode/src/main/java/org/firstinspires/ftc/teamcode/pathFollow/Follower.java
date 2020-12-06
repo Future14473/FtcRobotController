@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.pathFollow;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
@@ -19,6 +21,7 @@ public class Follower {
     volatile boolean running = true;
 
     // constructor stuff
+    LinearOpMode opmode;
     Mecanum drivetrain;
     Telemetry telemetry;
     GivesPosition odometry;
@@ -37,7 +40,7 @@ public class Follower {
 
 
             // move to target
-            boolean reached = goTowards(target);
+            boolean reached = isArrived(target);
 
             //advance point
             if (reached)
@@ -58,8 +61,13 @@ public class Follower {
         telemetry.update();
     });
 
+    public void goTo(PathPoint dest){
+        while (!isArrived(dest) && opmode.opModeIsActive()){
+            // keep going to the point
+        }
+    }
     //return true if dest reached
-    public boolean goTowards(PathPoint dest){
+    boolean isArrived(PathPoint dest){
 
         pose position = odometry.getPosition();
 
@@ -82,18 +90,16 @@ public class Follower {
         double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
 
         // if turning only use the gyro to increase accuracy
-        if (dest.x == 0 && dest.y == 0){
-            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
-            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.08)? rDirection:0);
-            return (rVel == 0);
-        }
+//        if (dest.x == 0 && dest.y == 0){
+//            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
+//            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.08)? rDirection:0);
+//            return (rVel == 0);
+//        }
 
         // because we're doing big motion, the robot tends to overshoot
         drivetrain.drive(xVel, yVel, rVel);
 
         telemetry.addData("To Point Amount", diff);
-        Log.d("To Point Amount", diff.toString());
-        Log.d("___________________________","_____________________");
 
         // return true if reached point
         return (xVel == 0 && yVel == 0 && rVel == 0);
@@ -120,6 +126,13 @@ public class Follower {
         followerIMU = imu;
     }
 
+    public Follower(Mecanum drivetrain, GivesPosition odometry, IMU imu, Telemetry telemetry, LinearOpMode opMode) {
+        this.drivetrain = drivetrain;
+        this.odometry = odometry;
+        this.telemetry = telemetry;
+        this.opmode = opMode;
+        followerIMU = imu;
+    }
 
     public void start(){
         running = true;

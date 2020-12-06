@@ -16,12 +16,9 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.firstinspires.ftc.teamcode.utility.Timing.delay;
 
 @Autonomous(name = "WebcamTest", group = "Auto")
 public class WebcamTest extends LinearOpMode {
@@ -63,7 +60,7 @@ public class WebcamTest extends LinearOpMode {
 
             telemetry.addData("Angle", angle);
             telemetry.update();
-            follower.goTowards(new PathPoint(0, 0, angle));
+//            follower.goTo(new PathPoint(0, 0, angle)); testing the auto so had to comment this out sorry
 
 
         }

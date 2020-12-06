@@ -65,7 +65,7 @@ public class GiveTheDefaultConfiguration {
 
 
         OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
-        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, 0), vertical);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
 
 //        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(10000000,10000000,Math.PI/2), horizontal);
 //        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(10000000,10000000, Math.PI), vertical);
@@ -76,7 +76,7 @@ public class GiveTheDefaultConfiguration {
         odometryWheels.add(horizontalOdo);
 
         // odometry system
-        pose initial = new pose(0,0,Math.PI/2);
+        pose initial = new pose(ImportPath.origin.x,ImportPath.origin.y,ImportPath.origin.dir);
         return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
     }
 }
