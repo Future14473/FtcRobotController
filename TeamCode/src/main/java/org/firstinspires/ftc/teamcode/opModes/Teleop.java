@@ -23,11 +23,9 @@ public class Teleop extends LinearOpMode
     DcMotor intake;
     DcMotor taco;
     DcMotor shooter_adjuster;
+    DcMotor shooter;
     CRServo gate;
     IMU imu;
-
-
-
 
     public void runOpMode() throws InterruptedException {
 
@@ -38,19 +36,16 @@ public class Teleop extends LinearOpMode
         intake = hardwareMap.get(DcMotor.class, "intake");
         taco = hardwareMap.get(DcMotor.class, "taco");
         gate = hardwareMap.get(CRServo.class, "gate");
-
+        shooter = hardwareMap.get(DcMotor.class, "shooter");
         shooter_adjuster = hardwareMap.get(DcMotor.class, "shooter_adjuster");
-        shooter_adjuster.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter_adjuster.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //shooter_adjuster.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //shooter_adjuster.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         telemetry.addData("Status", "Initialized");
 
         waitForStart();
         while (opModeIsActive()){
-
-
-        // stop when no one is touching anything
 
         double y = -gamepad1.right_stick_y;
         double x = gamepad1.right_stick_x;
@@ -59,6 +54,10 @@ public class Teleop extends LinearOpMode
         double targetDir = -Math.atan2(gamepad1.left_stick_y,gamepad1.left_stick_x) - Math.PI/2;
         double magnitude = Math.hypot(gamepad1.left_stick_y,gamepad1.left_stick_x);
         double turnPwr = RotationUtil.turnLeftOrRight(imu.getHeading(), targetDir, Math.PI * 2);
+
+        // stop when no one is touching anything
+        MecanumDrive.drive(x/3, y/3,
+                (magnitude > 0.5 && Math.abs(turnPwr) > 0.08)? turnPwr:0);
 
         double intakeOut = gamepad1.right_trigger;
         double intakeIn = -gamepad1.left_trigger;
@@ -69,28 +68,16 @@ public class Teleop extends LinearOpMode
 
 
         // shooter adjuster
-        if (gamepad1.dpad_up){ // moves the target position 10 up
-            shooter_adjuster.setTargetPosition(
-                    shooter_adjuster.getCurrentPosition() + 10
-            );
-        } else if (gamepad1.dpad_down){
-            shooter_adjuster.setTargetPosition(
-                    shooter_adjuster.getTargetPosition() - 10
-            );
-        }
+        shooter_adjuster.setPower( (gamepad1.dpad_up?-0.5:0.5) + (gamepad1.dpad_down?0.5:-0.5) );
+        shooter.setPower( (gamepad1.dpad_left?-0.5:0.5) + (gamepad1.dpad_right?0.5:-0.5) );
 
-        // shooter gate, 0 to 1, 0.5 is stationary
+        // shooter gate
+        gate.setPower(0);
         if (gamepad1.x){
             gate.setPower(1);
         } else if (gamepad1.y){
-            gate.setPower(0);
+            gate.setPower(-1);
         }
-        gate.setPower(0.5);
-
-
-        MecanumDrive.drive(x/3, y/3,
-                (magnitude > 0.5 && Math.abs(turnPwr) > 0.08)? turnPwr:0);
-
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Shooter Adjuster: ", shooter_adjuster.getCurrentPosition());
