@@ -29,7 +29,7 @@ public class Autonomous extends LinearOpMode {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
         intake = hardwareMap.get(DcMotor.class, "intake");
-        odometry = GiveTheDefaultConfiguration.defaultConfiguration(hardwareMap,imu,telemetry);
+        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
         Follower follower = new Follower(mecanum, odometry, imu, telemetry);
 
 
@@ -41,10 +41,7 @@ public class Autonomous extends LinearOpMode {
 
     // TODO use rotation odometry and check to see that localization works
         while (opModeIsActive()){
-            if (follower.target.isSame(ImportPath.getRingStartPos())){
-                intake.setPower(1.0);
-                Log.d("Intake on", "true");
-            }
+            while (follower.goTowards(ImportPath.ringStack)){}
             telemetry.update();
         }
 

@@ -31,7 +31,7 @@ public class OdoWheelIMULocalization extends LinearOpMode {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
 
-        odometry = GiveTheDefaultConfiguration.defaultConfiguration(hardwareMap,imu,telemetry);
+        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
         waitForStart();
 
         odometry.setPosition(new pose(0,0,0));

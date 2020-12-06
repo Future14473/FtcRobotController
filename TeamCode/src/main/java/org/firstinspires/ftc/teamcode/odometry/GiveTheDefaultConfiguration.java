@@ -59,13 +59,13 @@ public class GiveTheDefaultConfiguration {
         horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        DcMotor vertical = hardwareMap.get(DcMotor.class, "shooter_adjuster");
+        DcMotor vertical = hardwareMap.get(DcMotor.class, "shooter");
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
-        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, 0), vertical);
 
 //        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(10000000,10000000,Math.PI/2), horizontal);
 //        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(10000000,10000000, Math.PI), vertical);
