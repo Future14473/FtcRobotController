@@ -64,7 +64,7 @@ import com.qualcomm.robotcore.util.Range;
     private DcMotorEx taco;
     private DcMotorEx shooter;
     private  DcMotorEx shooter_adjust;
-//    private Servo wobble;
+    private Servo wobble;
     Mecanum Motors;
 
     @Override
@@ -79,7 +79,7 @@ import com.qualcomm.robotcore.util.Range;
         taco = hardwareMap.get(DcMotorEx.class, "taco");
         shooter  = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter_adjust  = hardwareMap.get(DcMotorEx.class, "shooter_adjuster");
-//        wobble = hardwareMap.get(Servo.class, "wobble");
+        wobble = hardwareMap.get(Servo.class, "wobble");
         waitForStart();
         runtime.reset();
 
@@ -105,12 +105,6 @@ import com.qualcomm.robotcore.util.Range;
                 Motors.backLeft.setVelocity(Motors.backLeft.getVelocity()/10);
             }
 
-            if(gamepad2.a){
-                intake.setVelocity(-10000);
-            }else{
-                intake.setVelocity(0);
-            }
-
             if(gamepad2.b){
                 taco.setVelocity(10000);
             }else{
@@ -123,20 +117,28 @@ import com.qualcomm.robotcore.util.Range;
                 shooter.setVelocity(0);
             }
 
-//            if(gamepad2.y){
-//                wobble.setPosition(1);
-//            }else{
-//                wobble.setPosition(0);
-//            }
-
             if(gamepad2.y){
+                wobble.setPosition(1);
+            }else{
+                wobble.setPosition(0);
+            }
+
+            if(gamepad2.dpad_up){
                 intake.setVelocity(1000);
+            }else{
+                intake.setVelocity(0);
+            }
+
+            if(gamepad2.dpad_down){
+                intake.setVelocity(-10000);
             }else{
                 intake.setVelocity(0);
             }
 
             double angle = -gamepad2.left_stick_y;
             shooter_adjust.setVelocity(angle);
+
+
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
