@@ -29,15 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -53,10 +50,10 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleOp", group="Linear Opmode")
+@TeleOp(name="TeleOp-v2", group="Linear Opmode")
 
 
- public class TeleOp_v1 extends LinearOpMode {
+ public class TeleOp_v2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -64,7 +61,16 @@ import com.qualcomm.robotcore.util.Range;
     private DcMotorEx taco;
     private DcMotorEx shooter;
     private  DcMotorEx shooter_adjust;
-//    private Servo wobble;
+    private Servo wobble;
+    private Servo wobble_arm;
+    private CRServo shooter_roller;
+    private boolean taco_rollerIsRunning = true;
+    private boolean intakeIsRunning = true;
+    private boolean reverseIntakeIsRunning = true;
+    private boolean shooterIsRunning = true;
+    private boolean wobbleIsRunning = true;
+    private boolean wobbleArmIsRunning = true;
+
     Mecanum Motors;
 
     @Override
@@ -79,7 +85,9 @@ import com.qualcomm.robotcore.util.Range;
         taco = hardwareMap.get(DcMotorEx.class, "taco");
         shooter  = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter_adjust  = hardwareMap.get(DcMotorEx.class, "shooter_adjuster");
-//        wobble = hardwareMap.get(Servo.class, "wobble");
+        wobble = hardwareMap.get(Servo.class, "wobble");
+        wobble_arm = hardwareMap.get(Servo.class, "wobble_arm");
+        shooter_roller = hardwareMap.get(CRServo.class, "shooter_roller");
         waitForStart();
         runtime.reset();
 
@@ -105,34 +113,64 @@ import com.qualcomm.robotcore.util.Range;
                 Motors.backLeft.setVelocity(Motors.backLeft.getVelocity()/10);
             }
 
-            if(gamepad2.b){
-                taco.setVelocity(10000);
-            }else{
-                taco.setVelocity(0);
+
+
+            if (gamepad2.right_trigger == 1&&taco_rollerIsRunning){
+                    taco.setVelocity(10000);
+                shooter_roller.setPower(100);
+                    taco_rollerIsRunning = false;
+
+            }
+            if (gamepad2.right_trigger == 1 &&!taco_rollerIsRunning){
+                    taco.setVelocity(0);
+                    shooter_roller.setPower(0);
+                taco_rollerIsRunning = true;
             }
 
-            if(gamepad2.x){
-                shooter.setVelocity(100);
-            }else{
-                shooter.setVelocity(0);
+
+
+            if (gamepad2.x&& shooterIsRunning){
+                    shooter.setVelocity(10000);
+                    shooterIsRunning = false;
+
+            }
+            if (gamepad2.x&&!shooterIsRunning){
+                    shooter.setVelocity(0);
+                    shooterIsRunning = true;
             }
 
-//            if(gamepad2.y){
-//                wobble.setPosition(1);
-//            }else{
-//                wobble.setPosition(0);
-//            }
 
-            if(gamepad2.dpad_up){
-                intake.setVelocity(1000);
-            }else{
-                intake.setVelocity(0);
+            if (gamepad2.y&& wobbleIsRunning){
+                    wobble.setPosition(1);
+                    wobbleIsRunning = false;
+
+            }
+            if (gamepad2.y&&!wobbleIsRunning){
+                    wobble.setPosition(0);
+                    wobbleIsRunning = true;
             }
 
-            if(gamepad2.dpad_down){
-                intake.setVelocity(-10000);
-            }else{
-                intake.setVelocity(0);
+
+            if (gamepad2.left_trigger == 1&&intakeIsRunning){
+                    intake.setVelocity(1000);
+                    intakeIsRunning = false;
+
+            }
+            if (gamepad2.left_trigger == 1&&!intakeIsRunning){
+                    intake.setVelocity(0);
+                    intakeIsRunning = true;
+            }
+
+
+
+            if (gamepad2.left_bumper&&reverseIntakeIsRunning){
+                    intake.setVelocity(-1000);
+                    reverseIntakeIsRunning = false;
+
+            }
+            if (gamepad2.left_bumper&&!reverseIntakeIsRunning){
+                    intake.setVelocity(0);
+                    reverseIntakeIsRunning = true;
             }
 
             double angle = -gamepad2.left_stick_y;
