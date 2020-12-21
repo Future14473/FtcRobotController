@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.odometry;
+package org.firstinspires.ftc.teamcode.odometry.resources;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
-public class DriveWheelOdometryWheel extends OdometryWheel{
+public class DriveWheelOdometryWheel extends OdometryWheel {
     DcMotor wheel;
 
 

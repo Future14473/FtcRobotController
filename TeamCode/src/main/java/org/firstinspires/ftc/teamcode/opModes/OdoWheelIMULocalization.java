@@ -35,11 +35,22 @@ public class OdoWheelIMULocalization extends LinearOpMode {
         waitForStart();
 
         odometry.setPosition(new pose(0,0,0));
+
+        horizontal = hardwareMap.get(DcMotor.class, "taco");
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        vertical = hardwareMap.get(DcMotor.class, "shooter");
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         odometry.start();
 
         while (opModeIsActive()){
             telemetry.addData("IMU Position", imu.getHeading());
             telemetry.addData("Odometry Position", odometry.getPosition());
+            telemetry.addData("Vert Wheel Ticks ", vertical.getCurrentPosition());
+            telemetry.addData("Horo Wheel Ticks ", horizontal.getCurrentPosition());
 
             telemetry.update();
 

@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.imu.IMU;
+import org.firstinspires.ftc.teamcode.odometry.resources.DriveWheelOdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.resources.OdometryThatusesIMUforHeading;
 import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
@@ -91,8 +93,8 @@ public class GiveTheDefaultConfiguration {
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
-        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
+        OdometryWheel horizontalOdo = new HoroOdoWheel(new pose(17.0,-19.0,Math.PI/2), horizontal);
+        OdometryWheel verticalOdo = new VertOdoWheel(new pose(-18.0,9.1, Math.PI), vertical);
 
 //        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(10000000,10000000,Math.PI/2), horizontal);
 //        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(10000000,10000000, Math.PI), vertical);
