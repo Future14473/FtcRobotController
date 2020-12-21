@@ -53,7 +53,7 @@ public class Autonomous extends LinearOpMode {
             intake.setPower(0);
             follower.goTo(ImportPath.targetA0);
             follower.goTo(ImportPath.targetA1);
-            follower.goTo(ImportPath.targetA);
+            //follower.goTo(ImportPath.targetA);
 
 
             telemetry.update();
