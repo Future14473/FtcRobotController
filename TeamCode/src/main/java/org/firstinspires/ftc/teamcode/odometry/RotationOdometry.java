@@ -49,7 +49,7 @@ public class RotationOdometry extends Odometry {
                                 // direction of travel
                                 wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)
                         ),
-                        facingRight
+                        facingForward
                 )
         );
 

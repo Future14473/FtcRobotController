@@ -21,7 +21,7 @@ import java.util.List;
 public class OdoWheelIMULocalization extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
-    Odometry odometry;
+    RotationOdometry odometry;
     DcMotor horizontal;
     DcMotor vertical;
 
@@ -31,7 +31,7 @@ public class OdoWheelIMULocalization extends LinearOpMode {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
 
-        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
+        odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
         waitForStart();
 
         odometry.setPosition(new pose(0,0,0));

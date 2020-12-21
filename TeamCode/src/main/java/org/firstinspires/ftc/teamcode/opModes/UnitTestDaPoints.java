@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,16 +9,19 @@ import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.GiveTheDefaultConfiguration;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
+import org.firstinspires.ftc.teamcode.odometry.RotationOdometry;
 import org.firstinspires.ftc.teamcode.pathFollow.Follower;
 import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
+import org.firstinspires.ftc.teamcode.pathgen.PathPoint;
+import org.firstinspires.ftc.teamcode.utility.pose;
 
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
-@TeleOp(name="Autonomous", group="Autonomous")
-public class Autonomous extends LinearOpMode {
+@TeleOp(name="UnitTestPoints", group="Autonomous")
+public class UnitTestDaPoints extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
-    Odometry odometry; //Todo make this rotation odometry
+    RotationOdometry odometry;
     DcMotor intake;
 
 
@@ -32,29 +33,33 @@ public class Autonomous extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
-        Follower follower = new Follower(mecanum, odometry, imu, telemetry, Autonomous.this);
+        odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
+        Follower follower = new Follower(mecanum, odometry, imu, telemetry, UnitTestDaPoints.this);
 
 
         waitForStart();
 
-
+        odometry.setPosition(new pose(0,0,0));
         odometry.start();
 //        follower.start();
 
     // TODO use rotation odometry and check to see that localization works
         while (opModeIsActive()){
-//            intake.setPower(1.0); // build needs to fix the intake
+            if (gamepad1.x){
+                follower.goTo(new PathPoint(0,60.96,0));
+            }
+            if (gamepad1.y){
+                follower.goTo(new PathPoint(60.96,0,0));
+            }
+            if (gamepad1.a){
+                follower.goTo(new PathPoint(0,0, Math.PI/2));
 
-//            follower.goTo(ImportPath.test);
-//            follower.goTo(ImportPath.ringStack01);
-            follower.goTo(ImportPath.ringStack02);
-            follower.goTo(ImportPath.ringStack1);
-            intake.setPower(0);
-            follower.goTo(ImportPath.targetA0);
-            follower.goTo(ImportPath.targetA1);
-            follower.goTo(ImportPath.targetA);
+            }
 
+            if (gamepad1.b){
+                follower.goTo(new PathPoint(0,0, 0)); //reset position
+
+            }
 
             telemetry.update();
         }
