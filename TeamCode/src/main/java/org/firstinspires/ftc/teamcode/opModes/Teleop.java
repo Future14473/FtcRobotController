@@ -26,8 +26,8 @@ public class Teleop extends LinearOpMode
     DcMotor taco;
     DcMotor shooter_adjuster;
     DcMotor shooter;
-    CRServo gate;
-    Servo wobArm, wobGrip;
+    Servo wobble_angler;
+    CRServo shooter_roller;
     IMU imu;
 
     public void runOpMode() throws InterruptedException {
@@ -38,14 +38,12 @@ public class Teleop extends LinearOpMode
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         taco = hardwareMap.get(DcMotor.class, "taco");
-        gate = hardwareMap.get(CRServo.class, "gate");
-        wobArm = hardwareMap.get(Servo.class, "wobArm");
-        wobGrip = hardwareMap.get(Servo.class, "wobGrip");
+        wobble_angler = hardwareMap.get(Servo.class, "wobble_angler");
+        shooter_roller = hardwareMap.get(CRServo.class, "shooter_roller");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
         shooter_adjuster = hardwareMap.get(DcMotor.class, "shooter_adjuster");
         shooter_adjuster.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooter_adjuster.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
         telemetry.addData("Status", "Initialized");
 
@@ -71,7 +69,9 @@ public class Teleop extends LinearOpMode
 
         // make the intake do the correct trigger, + is outward, - is inward
         intake.setPower(-(intakeIn + intakeOut));
-        taco.setPower(intakeIn + intakeOut);
+        taco.setPower(0.5 * (intakeIn + intakeOut));
+
+        shooter_roller.setPower((gamepad1.x?1:0) - (gamepad1.y?1:0));
 
 
         // shooter adjuster
@@ -87,8 +87,10 @@ public class Teleop extends LinearOpMode
 //        }
 
         if (gamepad1.a){
-            wobArm.setPosition(1.0);
-            wobGrip.setPosition(0);
+            wobble_angler.setPosition(0.2);
+        }
+        if (gamepad1.b){
+            wobble_angler.setPosition(0.5);
         }
 
         // Show the elapsed game time and wheel power.

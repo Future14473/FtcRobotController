@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.pathFollow;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.imu.IMU;
@@ -19,6 +21,7 @@ public class Follower {
     volatile boolean running = true;
 
     // constructor stuff
+    LinearOpMode opmode;
     Mecanum drivetrain;
     Telemetry telemetry;
     GivesPosition odometry;
@@ -37,7 +40,7 @@ public class Follower {
 
 
             // move to target
-            boolean reached = goTowards(target);
+            boolean reached = isArrived(target);
 
             //advance point
             if (reached)
@@ -58,8 +61,18 @@ public class Follower {
         telemetry.update();
     });
 
+    public void goTo(PathPoint dest){
+        while (!isArrived(dest) && opmode.opModeIsActive()){
+            Log.e("Odometry Position: ", odometry.getPosition().toString());
+            Log.e("Destiny: ", String.format("%.1f %.1f %.1f", dest.x, dest.y, dest.dir));
+            // keep going to the point
+        }
+        Log.e("Done with PAth: ", "true");
+        Log.e("______________________________________________________ ", "______________________________________________________");
+        telemetry.addData("Done with PAth: ", "true");
+    }
     //return true if dest reached
-    public boolean goTowards(PathPoint dest){
+    boolean isArrived(PathPoint dest){
 
         pose position = odometry.getPosition();
 
@@ -71,29 +84,29 @@ public class Follower {
         diff.x = intrinsic.x;
         diff.y = intrinsic.y;
 
+        Log.e("diff: ", String.format("%.1f %.1f %.1f",diff.x,diff.y,diff.r));
+
         // To consider:
         // 1) speeds below 0.1 cannot overcome static friction of drivetrain
         //    Therefore, all speeds below 0.1 will be rounded up to 0.1
         // 2) because of (1), robot will jerk when it gets near a point
         //    So stop moving when close enough
 
-        double xVel = (Math.abs(diff.x)>1)?     (diff.x/200 + 0.1 * Math.signum(diff.x)):0;
-        double yVel = (Math.abs(diff.y)>1)?     (diff.y/200 + 0.1 * Math.signum(diff.y)):0;
+        double xVel = (Math.abs(diff.x)>2)?     (diff.x/200 + 0.1 * Math.signum(diff.x)):0;
+        double yVel = (Math.abs(diff.y)>2)?     (diff.y/200 + 0.1 * Math.signum(diff.y)):0;
         double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
 
         // if turning only use the gyro to increase accuracy
-        if (dest.x == 0 && dest.y == 0){
-            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
-            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.08)? rDirection:0);
-            return (rVel == 0);
-        }
+//        if (dest.x == 0 && dest.y == 0){
+//            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
+//            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.08)? rDirection:0);
+//            return (rVel == 0);
+//        }
 
         // because we're doing big motion, the robot tends to overshoot
         drivetrain.drive(xVel, yVel, rVel);
 
         telemetry.addData("To Point Amount", diff);
-        Log.d("To Point Amount", diff.toString());
-        Log.d("___________________________","_____________________");
 
         // return true if reached point
         return (xVel == 0 && yVel == 0 && rVel == 0);
@@ -120,6 +133,13 @@ public class Follower {
         followerIMU = imu;
     }
 
+    public Follower(Mecanum drivetrain, GivesPosition odometry, IMU imu, Telemetry telemetry, LinearOpMode opMode) {
+        this.drivetrain = drivetrain;
+        this.odometry = odometry;
+        this.telemetry = telemetry;
+        this.opmode = opMode;
+        followerIMU = imu;
+    }
 
     public void start(){
         running = true;
