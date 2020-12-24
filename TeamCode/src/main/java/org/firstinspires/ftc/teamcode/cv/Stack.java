@@ -59,5 +59,24 @@ public class Stack implements Comparable<Stack>{
             return 0;
         }
     }
+
+    /*
+    Returns the stack that's closest in terms of the y pixel value
+     */
+    public static Rect closestStack(ArrayList<Stack> list){
+        if(list.isEmpty()){
+            return new Rect();
+        }
+        int minY = 360;
+        int index = 0;
+        for(int i = 0; i< list.size(); i++){
+            Rect currRect = list.get(i).fullStack;
+            if(minY > currRect.y + currRect.height){
+                minY = currRect.y + currRect.height;
+                index = i;
+            }
+        }
+        return list.get(index).fullStack;
+    }
 }
 

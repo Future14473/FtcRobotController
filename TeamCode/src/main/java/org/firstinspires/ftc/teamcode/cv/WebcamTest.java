@@ -52,24 +52,21 @@ public class WebcamTest extends LinearOpMode {
 
         webcam.setPipeline(detector);
         webcam.openCameraDeviceAsync(() -> {
-            webcam.startStreaming(960, 720, OpenCvCameraRotation.UPRIGHT);
+            webcam.startStreaming(480, 360, OpenCvCameraRotation.UPRIGHT);
         });
 
         waitForStart();
         odometry.start();
 
         while(opModeIsActive()){
-            double angle = detector.jankAngle(detector.bestWobble());
-
-            telemetry.addData("Angle", angle);
-            telemetry.update();
-            follower.goTowards(new PathPoint(0, 0, angle));
-
-
+            for(int i = 0; i<100;i++){
+                telemetry.addData("Angle", detector.angle);
+                telemetry.update();
+                follower.goTowards(new PathPoint(0, 0, detector.angle));
+                wait(1000);
+            }
         }
 
-
-        wait(10000);
         webcam.stopStreaming();
         odometry.end();
     }
