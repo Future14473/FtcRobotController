@@ -73,10 +73,9 @@ public class Teleop extends LinearOpMode
 
         shooter_roller.setPower((gamepad1.x?1:0) - (gamepad1.y?1:0));
 
-
         // shooter adjuster
         shooter_adjuster.setPower( (gamepad1.dpad_up?-0.5:0.5) + (gamepad1.dpad_down?0.5:-0.5) );
-        shooter.setPower( (gamepad1.dpad_left?-0.5:0.5) + (gamepad1.dpad_right?0.5:-0.5) );
+        shooter.setPower((gamepad1.dpad_left?-0.5:0.5) + (gamepad1.dpad_right?0.5:-0.5) );
 
         // shooter gate
 //        gate.setPower(0);

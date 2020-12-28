@@ -80,11 +80,11 @@ public class Follower {
                 RotationUtil.turnLeftOrRight(position.r, dest.dir, Math.PI * 2));
 
         // to intrinsic
-        point intrinsic = new point(diff.x, diff.y).rotate(-diff.r);
+        point intrinsic = new point(diff.x, diff.y).rotate(-position.r);
         diff.x = intrinsic.x;
         diff.y = intrinsic.y;
 
-        Log.e("diff: ", String.format("%.1f %.1f %.1f",diff.x,diff.y,diff.r));
+        Log.e("diff (intrinsic): ", String.format("%.1f %.1f %.1f",diff.x,diff.y,diff.r));
 
         // To consider:
         // 1) speeds below 0.1 cannot overcome static friction of drivetrain
@@ -92,9 +92,9 @@ public class Follower {
         // 2) because of (1), robot will jerk when it gets near a point
         //    So stop moving when close enough
 
-        double xVel = (Math.abs(diff.x)>2)?     (diff.x/200 + 0.1 * Math.signum(diff.x)):0;
-        double yVel = (Math.abs(diff.y)>2)?     (diff.y/200 + 0.1 * Math.signum(diff.y)):0;
-        double rVel = (Math.abs(diff.r)>0.05)?  (diff.r    + 0.1 * Math.signum(diff.r)):0;
+        double xVel = Math.abs(diff.x)<2    ? 0 : Math.max(Math.abs(diff.x)/200, 0.1) * Math.signum(diff.x);
+        double yVel = Math.abs(diff.y)<2    ? 0 : Math.max(Math.abs(diff.y)/200, 0.1) * Math.signum(diff.y);
+        double rVel = Math.abs(diff.r)<0.05 ? 0 : Math.max(Math.abs(diff.r), 0.1) * Math.signum(diff.r);
 
         // if turning only use the gyro to increase accuracy
 //        if (dest.x == 0 && dest.y == 0){
