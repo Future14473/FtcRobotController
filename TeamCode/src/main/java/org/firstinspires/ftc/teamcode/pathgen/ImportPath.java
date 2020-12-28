@@ -14,7 +14,7 @@ public class ImportPath {
 
     public static PathPoint targetA0 = new PathPoint(xTile * 1.75, centerOffset + (yTile * 2.7),-Math.PI/4);
     public static PathPoint targetA1 = new PathPoint(xTile * 1.9, centerOffset + (yTile * 3.2),-Math.PI/3);
-//    public static PathPoint targetA = new PathPoint(xTile * 2, centerOffset + (yTile * 3.5),-Math.PI/2);
+    public static PathPoint targetA = new PathPoint(xTile * 2, centerOffset + (yTile * 3.5),-Math.PI/2);
     public static PathPoint targetB = new PathPoint(xTile * 2,  centerOffset + yTile * 4.5,0);
 
 

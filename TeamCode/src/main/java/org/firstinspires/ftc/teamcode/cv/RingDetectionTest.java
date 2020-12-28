@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.DriveWheelOdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.resources.DriveWheelOdometryWheel;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
