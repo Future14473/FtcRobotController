@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.odometry.resources.DriveWheelOdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.resources.FreeSpinOdoWheel;
 import org.firstinspires.ftc.teamcode.odometry.resources.OdometryThatusesIMUforHeading;
 import org.firstinspires.ftc.teamcode.pathgen.ImportPath;
 import org.firstinspires.ftc.teamcode.utility.pose;

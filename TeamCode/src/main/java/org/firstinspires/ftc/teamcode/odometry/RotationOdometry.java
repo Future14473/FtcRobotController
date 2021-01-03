@@ -10,6 +10,7 @@ import java.util.function.Function;
 public class RotationOdometry extends Odometry {
     IMU imu;
     double prevAngle = 0;
+    public double rotDelta; //TODO make this not public later
 
     public RotationOdometry(pose initial, IMU imu, List<OdometryWheel> wheels) {
         super(initial, wheels);
@@ -32,7 +33,7 @@ public class RotationOdometry extends Odometry {
 
     public pose getDeltaPose(){
         double imuHeading = imu.getHeading();
-        double rotDelta = RotationUtil.turnLeftOrRight(prevAngle, imuHeading, Math.PI/2);
+        rotDelta = RotationUtil.turnLeftOrRight(prevAngle, imuHeading, Math.PI/2);
         prevAngle = imuHeading;
 
         Average average = new Average();
