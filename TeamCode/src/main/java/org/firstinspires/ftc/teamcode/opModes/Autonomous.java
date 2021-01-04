@@ -52,26 +52,26 @@ public class Autonomous extends LinearOpMode {
         timer = new Timing(Autonomous.this);
 
         waitForStart();
-//        shooter.setPower(-0.5);
+        shooter.setPower(-0.5);
         odometry.start();
         odometry.setPosition(new pose(ImportPath.origin.x, ImportPath.origin.y, ImportPath.origin.dir));
         boolean finished = false;
 //        follower.start();
 
     // TODO use rotation odometry and check to see that localization works
-        while (opModeIsActive() && !finished){
-
+        while (opModeIsActive() && !finished){ //TODO mostly works by itself but once it goes together everything stops working
+            shooter.setPower(-0.5);
             follower.goTo(ImportPath.powerShotRight0);
             follower.goTo(ImportPath.powerShotRight);
 
-//            shooter_roller.setPower(1);
-//            taco.setPower(0.5);
-            timer.safeDelay(5000);
+            shooter_roller.setPower(1);
+            taco.setPower(0.5);
+//            timer.safeDelay(5000);
 //            shooter_roller.setPower(0);
 
             telemetry.addData("done with auto" , ":)");
             telemetry.update();
-            finished = true;
+//            finished = true;
 //            shooter.setPower(-0.5);
 //            taco.setPower(0.5);
 //            shooter_roller.setPower(1);
