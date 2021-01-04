@@ -66,6 +66,9 @@ public class Follower {
             Log.e("Odometry Position: ", odometry.getPosition().toString());
             Log.e("Destiny: ", String.format("%.1f %.1f %.1f", dest.x, dest.y, dest.dir));
             // keep going to the point
+            telemetry.addData("Odometry Position: ", odometry.getPosition().toString());
+            telemetry.addData("Destiny: ", String.format("%.1f %.1f %.1f", dest.x, dest.y, dest.dir));
+            telemetry.update();
         }
         Log.e("Done with PAth: ", "true");
         Log.e("______________________________________________________ ", "______________________________________________________");
@@ -96,12 +99,14 @@ public class Follower {
         double yVel = Math.abs(diff.y)<2    ? 0 : Math.max(Math.abs(diff.y)/200, 0.1) * Math.signum(diff.y);
         double rVel = Math.abs(diff.r)<0.05 ? 0 : Math.max(Math.abs(diff.r), 0.1) * Math.signum(diff.r);
 
-        // if turning only use the gyro to increase accuracy
-//        if (dest.x == 0 && dest.y == 0){
-//            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
-//            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.08)? rDirection:0);
-//            return (rVel == 0);
-//        }
+        // if turning only use the gyro
+        if (dest.x == position.x && dest.y == position.y){
+            telemetry.addData("ASUDFURHRHR : ", "JUST TURNINGINGNGNGNGNGNG");
+            telemetry.update();
+            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
+            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.05)? rDirection:0);
+            return (rVel == 0);
+        }
 
         // because we're doing big motion, the robot tends to overshoot
         drivetrain.drive(xVel, yVel, rVel);
