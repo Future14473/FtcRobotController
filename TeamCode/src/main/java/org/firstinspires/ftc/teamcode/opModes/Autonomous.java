@@ -47,7 +47,7 @@ public class Autonomous extends LinearOpMode {
         taco = hardwareMap.get(DcMotor.class, "taco");
         shooter_roller = hardwareMap.get(CRServo.class, "shooter_roller");
 
-        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
+        odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
         Follower follower = new Follower(mecanum, odometry, imu, telemetry, Autonomous.this);
         timer = new Timing(Autonomous.this);
 
