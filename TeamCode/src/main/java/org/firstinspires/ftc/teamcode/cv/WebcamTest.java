@@ -33,7 +33,7 @@ public class WebcamTest extends LinearOpMode {
         MecanumDrive = new Mecanum(hardwareMap);
         odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
         imu = new IMU(hardwareMap, telemetry);
-        follower = new Follower(MecanumDrive, odometry, imu, telemetry);
+        follower = new Follower(MecanumDrive, odometry, imu, telemetry, WebcamTest.this);
 
 
         //Setting up Camera
