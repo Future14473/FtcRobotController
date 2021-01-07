@@ -85,27 +85,27 @@ public class GiveTheDefaultConfiguration {
         return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
     }
 
-    public static Odometry odoOnlyConfig(HardwareMap hardwareMap, IMU imu, Telemetry telemetry){
-        DcMotor horizontal = hardwareMap.get(DcMotor.class, "taco");
-        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        DcMotor vertical = hardwareMap.get(DcMotor.class, "shooter");
-        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(horoOffset, horizontal);
-        OdometryWheel verticalOdo = new FreeSpinOdoWheel(vertOffset, vertical);
-
-        List<OdometryWheel> odometryWheels = new ArrayList<>();
-
-        odometryWheels.add(verticalOdo);
-        odometryWheels.add(horizontalOdo);
-
-        // odometry system
-        pose initial = new pose(ImportPath.origin.x,ImportPath.origin.y,ImportPath.origin.dir);
-        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
-    }
+//    public static Odometry odoOnlyConfig(HardwareMap hardwareMap, IMU imu, Telemetry telemetry){
+//        DcMotor horizontal = hardwareMap.get(DcMotor.class, "taco");
+//        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//
+//        DcMotor vertical = hardwareMap.get(DcMotor.class, "shooter");
+//        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//
+//        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(horoOffset, horizontal);
+//        OdometryWheel verticalOdo = new FreeSpinOdoWheel(vertOffset, vertical);
+//
+//        List<OdometryWheel> odometryWheels = new ArrayList<>();
+//
+//        odometryWheels.add(verticalOdo);
+//        odometryWheels.add(horizontalOdo);
+//
+//        // odometry system
+//        pose initial = new pose(ImportPath.origin.x,ImportPath.origin.y,ImportPath.origin.dir);
+//        return new OdometryThatusesIMUforHeading(imu, initial, odometryWheels, telemetry);
+//    }
 }

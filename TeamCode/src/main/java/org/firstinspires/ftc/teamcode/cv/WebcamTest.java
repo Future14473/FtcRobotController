@@ -31,7 +31,7 @@ public class WebcamTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive = new Mecanum(hardwareMap);
-        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
+        odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
         imu = new IMU(hardwareMap, telemetry);
         follower = new Follower(MecanumDrive, odometry, imu, telemetry);
 
