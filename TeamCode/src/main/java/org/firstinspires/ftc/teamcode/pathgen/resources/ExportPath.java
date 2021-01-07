@@ -1,4 +1,7 @@
-package org.firstinspires.ftc.teamcode.pathgen;
+package org.firstinspires.ftc.teamcode.pathgen.resources;
+
+import org.firstinspires.ftc.teamcode.pathgen.Path;
+import org.firstinspires.ftc.teamcode.pathgen.PathPoint;
 
 import java.io.IOException;
 import java.nio.file.Files;

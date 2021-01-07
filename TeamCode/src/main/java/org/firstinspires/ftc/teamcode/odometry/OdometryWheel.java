@@ -12,7 +12,7 @@ public abstract class OdometryWheel {
     private double prevTicks = 0;
     protected double deltaTicks = 0;
 
-    public abstract long getWheelTicks();
+    protected abstract long getWheelTicks();
 
     public double totalDistTravelled = 0;
 

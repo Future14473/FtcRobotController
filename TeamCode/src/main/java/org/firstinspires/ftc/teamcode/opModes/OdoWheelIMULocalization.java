@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,9 +11,6 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.*;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 import org.firstinspires.ftc.teamcode.utility.pose;
-
-import java.util.ArrayList;
-import java.util.List;
 
 // localization with drive wheel encoders and IMU heading
 // no following; use controller to move
@@ -24,17 +22,21 @@ public class OdoWheelIMULocalization extends LinearOpMode {
     RotationOdometry odometry;
     DcMotor horizontal;
     DcMotor vertical;
+    double totalDeltaAngle = 0;
+    double currentDeltaAngle = 0;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
 
         odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
         waitForStart();
 
-        odometry.setPosition(new pose(0,0,0));
+
 
         horizontal = hardwareMap.get(DcMotor.class, "taco");
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -44,13 +46,25 @@ public class OdoWheelIMULocalization extends LinearOpMode {
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        odometry.setPosition(new pose(0,0,0));
         odometry.start();
 
         while (opModeIsActive()){
+            currentDeltaAngle = odometry.rotDelta;
+            totalDeltaAngle += currentDeltaAngle;
+
+            Log.e("Rot Delta", String.valueOf(odometry.rotDelta));
+            Log.e("Horo Delta", String.valueOf(odometry.horoTrans));
+            Log.e("Vert Delta", String.valueOf(odometry.vertTrans));
+            Log.e("_________________","______________________");
+
             telemetry.addData("IMU Position", imu.getHeading());
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.addData("Vert Wheel Ticks ", vertical.getCurrentPosition());
             telemetry.addData("Horo Wheel Ticks ", horizontal.getCurrentPosition());
+            telemetry.addData("Rot Delta", odometry.rotDelta);
+            telemetry.addData("Sum Rot Delta", totalDeltaAngle);
+
 
             telemetry.update();
 

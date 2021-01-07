@@ -69,14 +69,14 @@ public class Teleop extends LinearOpMode
 
         // make the intake do the correct trigger, + is outward, - is inward
         intake.setPower(-(intakeIn + intakeOut));
-        taco.setPower(0.5 * (intakeIn + intakeOut));
+        taco.setPower((intakeIn + intakeOut));
 
         shooter_roller.setPower((gamepad1.x?1:0) - (gamepad1.y?1:0));
 
-
+//        shooter_roller.setPower(1);
         // shooter adjuster
         shooter_adjuster.setPower( (gamepad1.dpad_up?-0.5:0.5) + (gamepad1.dpad_down?0.5:-0.5) );
-        shooter.setPower( (gamepad1.dpad_left?-0.5:0.5) + (gamepad1.dpad_right?0.5:-0.5) );
+        shooter.setPower((gamepad1.dpad_left?-0.795:0) + (gamepad1.dpad_right?0.795:0) );
 
         // shooter gate
 //        gate.setPower(0);
@@ -95,8 +95,10 @@ public class Teleop extends LinearOpMode
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Shooter Adjuster: ", shooter_adjuster.getCurrentPosition());
+        telemetry.addData("Shooter_roller ", shooter_roller.getPower());
         Log.e("Shooter Adjuster: ", String.valueOf( shooter_adjuster.getCurrentPosition()));
         telemetry.addData("Trigger Right: ", intakeIn);
+        telemetry.update();
     }
 
 

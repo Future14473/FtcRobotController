@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.pathgen;
 
 public class ImportPath {
+    // 1 ft to cm = 30.48cm
+    // 2ft to 60.96
+
     static double centerOffset = 22.86;
     static double yTile = 60.96;
     static double xTile = -yTile; // negative because of the half of the field we are using
@@ -18,6 +21,17 @@ public class ImportPath {
     public static PathPoint targetB = new PathPoint(xTile * 2,  centerOffset + yTile * 4.5,0);
 
 
+    // power shot  points
+    public static PathPoint powerShotMiddle = new PathPoint(xTile * -0.5,  centerOffset + yTile * 0,0);
+
+
+    public static PathPoint powerShotLeft = new PathPoint(xTile,  centerOffset + yTile * 0,0);
+
+    public static PathPoint powerShotRight0 = new PathPoint(xTile,  centerOffset + 12 ,0);
+    public static PathPoint powerShotRight = new PathPoint(xTile,  centerOffset + 12 ,-Math.PI/12);
+
+
+// old stuff
     static Path path;
 
     public static Path getPath() {
@@ -26,34 +40,10 @@ public class ImportPath {
         path.add(origin);
         path.add(ringStack1);
 
-
         return path;
     }
-
-    // 1 ft to cm = 30.48cm
-    // 2ft to 60.96
-    public static PathPoint getOrigin(){
-        return new PathPoint(xTile,0, 0);
-    }
-
-    public static PathPoint getRingStartPos(){
-        return new PathPoint(xTile * 1.5, yTile * 2,0);
-    }
-
-    public static PathPoint getTargetA(){ return new PathPoint(xTile * 3, yTile * 3.5,0); }
-
-    public static PathPoint getTargetB(){ return new PathPoint(xTile * 2, yTile * 4.5,0); }
-
-
-
-
-
-
-
-
-
-
-//        String stringPath = Paths.getDefaultPath("default");
+// old stuff below
+    //        String stringPath = Paths.getDefaultPath("default");
 //        Path ret = new Path();
 //        String[] lines = stringPath.split("\n");
 //        for (String line : lines){
