@@ -34,8 +34,8 @@ public class Detection extends OpenCvPipeline {
     // Variables for camera view -> Distance
     public static final double x0 = 20;
     public static final double z0 = 30;
-    public static final int yP = 720;
-    public static final int xP = 960;
+    public static final int yP = 288;
+    public static final int xP = 352;
     public static final double theta0 = Math.atan(z0/x0);
     public static final double viewAngle = Math.PI - 2* theta0;
     public static final double realX0 = 35;
@@ -44,9 +44,8 @@ public class Detection extends OpenCvPipeline {
     ArrayList<double[]> wobbles = new ArrayList<>();
     int wobbleIterations = 10;
 
-    Mat formatted = new Mat();
-    Mat resized = new Mat();
     Mat recolored = new Mat();
+    Mat formatted = new Mat();
     Mat threshold = new Mat();
     Mat subthreshold = new Mat();
     Mat submat = new Mat();
@@ -79,39 +78,22 @@ public class Detection extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input){
-        formatted = picSetup(input);
-        if(wobbleIterations < 0){
-            return input;
-        }
+        picSetup(input);
         output = markRings(input, find_rings(formatted));
-
         stack = CountRings(find_rings(formatted));
-//        wobbleIterations--;
+        telemetry.addData("Ring Count", stack);
+        telemetry.update();
+        formatted.release();
         return output;
     }
 
-
     // Setting up the picture to have a height of 960 pix and recoloring to BGR
     // Updates the avgValues
-    public Mat picSetup(Mat input) {
-        Mat recolored = new Mat();
-        cvtColor(input, recolored, COLOR_RGB2BGR);
-        resized = new Mat();
-        double scale = 360.0/input.height();
-        Imgproc.resize(recolored, resized, new Size(Math.round(input.width() * scale), Math.round(input.height() * scale)));
-        recolored.release();
-        avgValues(resized);
-        return resized;
+    public void picSetup(Mat input) {
+        cvtColor(input, formatted, COLOR_RGB2BGR);
+        avgValues(formatted);
     }
 
-    // Resizes image to height 960 pix
-    public Mat picSetupNoFlip(Mat input) {
-        resized = new Mat();
-        double scale = 960.0/input.height();
-        Imgproc.resize(input, resized, new Size(Math.round(input.width() * scale), Math.round(input.height() * scale)));
-        recolored.release();
-        return resized;
-    }
 
     // Creates a new Mat object converted from BGR to HSV
     public Mat copyHSV(Mat input){
@@ -195,6 +177,7 @@ public class Detection extends OpenCvPipeline {
      */
     public ArrayList<Rect> find_subcontours(Mat input){
         subthreshold = find_yellows(input);
+
         Mat gray = new Mat();
         Mat grayblur = new Mat();
         Mat edgesX = new Mat();
@@ -202,7 +185,7 @@ public class Detection extends OpenCvPipeline {
         Mat finalMat = new Mat();
         ArrayList<Rect> output = new ArrayList<>();
         cvtColor(input, gray, COLOR_BGR2GRAY);
-        Imgproc.blur(gray, grayblur, new Size(3,3));
+        Imgproc.blur(gray, grayblur, new Size(2,2));
         Imgproc.Sobel(grayblur, edgesX, -1, 0, 1);
         Core.subtract(subthreshold, edgesX, sub);
 
@@ -234,6 +217,7 @@ public class Detection extends OpenCvPipeline {
 
 
     public ArrayList<Stack> find_rings(Mat input){
+
         threshold = find_yellows(input);
 
         List<MatOfPoint> contours = new ArrayList<>();
@@ -242,13 +226,14 @@ public class Detection extends OpenCvPipeline {
         //rough filtering
         contours.removeIf(m -> {
             Rect rect = Imgproc.boundingRect(m);
-            return (rect.area() < 500) || (rect.height > rect.width);
+            return (rect.area() < 700) || (rect.height > rect.width) || (rect.height + rect.y < yP/2);
         });
 
         //Rings will be sorted into Stacks in rectsData
         ArrayList<Stack> rectsData= new ArrayList<>();
 
         //sorting "rings" into stacks
+
         for(MatOfPoint contour:contours){
             Rect rect = Imgproc.boundingRect(contour);
             Rect oldrect = Imgproc.boundingRect(contour);
@@ -262,7 +247,6 @@ public class Detection extends OpenCvPipeline {
             double r = (double)rect.height/rect.width;
             if((r < DMAXR) && (r > DMINR)){
                 rectsData.add(new Stack(oldrect));
-                angle = jankAngle(oldrect);
                 continue;
             }
             ArrayList<Rect> moreRects = find_subcontours(submat);
@@ -281,11 +265,14 @@ public class Detection extends OpenCvPipeline {
                 else{
                     rectsData.get(index).addExisting(subrect);
                 }
-                angle = jankAngle(subrect);
             }
+
         }
 
-        //labeling found stacks
+        if(!rectsData.isEmpty()){
+            angle = jankAngle(Stack.closestStack(rectsData));
+        }
+
         threshold.release();
         return rectsData;
     }
@@ -305,7 +292,7 @@ public class Detection extends OpenCvPipeline {
         contours.removeIf(m -> {
             double height2 = Math.pow(Imgproc.boundingRect(m).height, 2);
             double area = contourArea(m);
-            return ((area < 1000) || (area < height2/SMAXR) || (area > height2/SMINR));
+            return ((area < 700) || (area < height2/SMAXR) || (area > height2/SMINR));
         });
 
         return (contours.size() > 0);
@@ -325,8 +312,8 @@ public class Detection extends OpenCvPipeline {
             System.out.println("ERROR: Not a valid side.");
         }
 
-        Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(10, 10));
-        Mat kernelE = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size((int)(input.width()/125.0), 1));
+        Mat kernel = Imgproc.getStructuringElement(CV_SHAPE_ELLIPSE, new Size(5, 5));
+        Mat kernelE = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size((int)(input.width()/62.5), 1));
 
         // Dilating and eroding to produce smoother results with less noise
         Imgproc.dilate(threshold, threshold, kernel);
@@ -371,15 +358,16 @@ public class Detection extends OpenCvPipeline {
 
             }
         }
+
         return canvas;
     }
 
     public int CountRings(ArrayList<Stack> rectsData){
-        int maxCount = Collections.max(rectsData).count;
-        if(maxCount == 0){
+        if(rectsData.isEmpty()){
             return 0;
         }
-        else if(maxCount == 1){
+        int maxCount = Collections.max(rectsData).count;
+        if(maxCount == 1){
             return 1;
         }
         else{
@@ -400,7 +388,7 @@ public class Detection extends OpenCvPipeline {
 
     public double jankAngle(Rect target){
         double dx = (target.x + target.width/2.0) - xP/2.0;
-        return dx/(double)xP*70;
+        return Math.toRadians(dx/(double)xP*70);
     }
 
 

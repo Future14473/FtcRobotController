@@ -4,9 +4,9 @@ import org.opencv.core.Rect;
 import java.util.ArrayList;
 
 public class Stack implements Comparable<Stack>{
-    public int count;
-    public double avgHeight;
-    public Rect fullStack;
+    public int count = 0;
+    public double avgHeight = 0;
+    public Rect fullStack = new Rect();
 
     public Stack(Rect firstObj){
         this.count = 1;
@@ -64,19 +64,17 @@ public class Stack implements Comparable<Stack>{
     Returns the stack that's closest in terms of the y pixel value
      */
     public static Rect closestStack(ArrayList<Stack> list){
-        if(list.isEmpty()){
-            return new Rect();
-        }
-        int minY = 360;
+        int maxY = 0;
         int index = 0;
         for(int i = 0; i< list.size(); i++){
             Rect currRect = list.get(i).fullStack;
-            if(minY > currRect.y + currRect.height){
-                minY = currRect.y + currRect.height;
+            if(maxY < currRect.y + currRect.height){
+                maxY = currRect.y + currRect.height;
                 index = i;
             }
         }
         return list.get(index).fullStack;
     }
+
 }
 
