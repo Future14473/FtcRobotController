@@ -103,8 +103,8 @@ public class Follower {
         if (dest.x == position.x && dest.y == position.y){
             telemetry.addData("ASUDFURHRHR : ", "JUST TURNINGINGNGNGNGNGNG");
             telemetry.update();
-            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2) / 6;
-            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection) > 0.05)? rDirection:0);
+            double rDirection = RotationUtil.turnLeftOrRight(followerIMU.getHeading(), dest.dir, Math.PI * 2);
+            drivetrain.drive(0,0,(rVel > 0.5 && Math.abs(rDirection/6) > 0.05)? rDirection:0);
             return (rVel == 0);
         }
 
