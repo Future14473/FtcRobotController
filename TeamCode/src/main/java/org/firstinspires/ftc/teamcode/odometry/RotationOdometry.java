@@ -11,8 +11,8 @@ public class RotationOdometry extends Odometry {
     IMU imu;
     double prevAngle = 0;
     List<OdometryWheel> wheels;
-    OdometryWheel horoWheel;
-    OdometryWheel vertWheel;
+    public OdometryWheel horoWheel;
+    public OdometryWheel vertWheel;
     double horoRotConst =  -9.828 +  0.67945;
     double vertRotConst =  35.889 + 5.180;
     public double rotDelta; //TODO make this not public later
@@ -23,15 +23,6 @@ public class RotationOdometry extends Odometry {
         super(initial, wheels);
         this.imu = imu;
         this.wheels = wheels;
-
-        // assign each of the wheels to its proper field
-        for (OdometryWheel wheel : wheels){
-            if (wheel.offset.r == Math.PI/2){
-                this.horoWheel = wheel;
-            } if (wheel.offset.r == Math.PI){
-                this.vertWheel = wheel;
-            }
-        }
 
     }
 
@@ -46,7 +37,9 @@ public class RotationOdometry extends Odometry {
         curved.x = -itrans.x;
         curved.y = -itrans.y;
 
-        position.translateRelative(curved);
+        //position.translateRelative(curved);
+        position.translateRelative(delta);
+
     }
 
     public pose getDeltaPose(){
@@ -54,12 +47,8 @@ public class RotationOdometry extends Odometry {
         rotDelta = RotationUtil.turnLeftOrRight(prevAngle, imuHeading, Math.PI/2);
         prevAngle = imuHeading;
 
-        horoTrans = horoWheel.getDeltaDistance();
-        vertTrans = vertWheel.getDeltaDistance();
-
-//        horoTrans = horoWheel.getDeltaDistance() - (rotDelta * horoRotConst);
-//        vertTrans = vertWheel.getDeltaDistance() - (rotDelta * vertRotConst);
-
+        horoTrans = horoWheel.dotProduct(horoWheel.getDeltaDistance(), 0) - horoWheel.dotProduct(rotDelta * horoWheel.distanceToCenter(), horoWheel.ccTangentDir());
+        vertTrans = vertWheel.dotProduct(horoWheel.getDeltaDistance(), Math.PI/2) - vertWheel.dotProduct(rotDelta * vertWheel.distanceToCenter(), vertWheel.ccTangentDir()) ;
 
         /*
         Average average = new Average();

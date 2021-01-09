@@ -53,15 +53,15 @@ public class OdoWheelIMULocalization extends LinearOpMode {
             currentDeltaAngle = odometry.rotDelta;
             totalDeltaAngle += currentDeltaAngle;
 
-            Log.e("Rot Delta", String.valueOf(odometry.rotDelta));
+            Log.e("Rot Delta", String.valueOf(odometry.rotDelta ));
             Log.e("Horo Delta", String.valueOf(odometry.horoTrans));
             Log.e("Vert Delta", String.valueOf(odometry.vertTrans));
             Log.e("_________________","______________________");
 
             telemetry.addData("IMU Position", imu.getHeading());
             telemetry.addData("Odometry Position", odometry.getPosition());
-            telemetry.addData("Vert Wheel Ticks ", vertical.getCurrentPosition());
-            telemetry.addData("Horo Wheel Ticks ", horizontal.getCurrentPosition());
+            telemetry.addData("Vert Wheel distance ", odometry.vertWheel.totalDistTravelled);
+            telemetry.addData("Horo Wheel distance ", odometry.horoWheel.totalDistTravelled);
             telemetry.addData("Rot Delta", odometry.rotDelta);
             telemetry.addData("Sum Rot Delta", totalDeltaAngle);
 

@@ -83,7 +83,7 @@ public class Odometry implements GivesPosition {
                 //The farther, the heavier.  The more aligned to direction, the heavier
                 wheel.distanceToCenter() * Math.abs(wheel.dotProduct(
                                 1,
-                                wheel.ccTangentDir(xCenterOfRotation, yCenterOfRotation)))));
+                                wheel.ccTangentDir()))));
 
 //        return new pose(0,0,0);
         return new pose(horoTransNet, vertTransNet, rotAngNet);

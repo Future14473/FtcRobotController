@@ -34,7 +34,7 @@ public class RingDetectionTest extends LinearOpMode {
         MecanumDrive = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
 
-        odometry = GiveTheDefaultConfiguration.odoOnlyConfig(hardwareMap,imu,telemetry);
+        odometry = GiveTheDefaultConfiguration.rotationOdometryConfig(hardwareMap,imu,telemetry);
 
         //Setting up Camera
 

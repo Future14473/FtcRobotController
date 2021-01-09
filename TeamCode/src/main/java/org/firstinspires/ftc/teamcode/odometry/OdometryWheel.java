@@ -63,7 +63,11 @@ public abstract class OdometryWheel {
         return botTransMag * Math.cos(botTransDir - offset.r);
     }
 
-    double ccTangentDir(double xCenter, double yCenter){
+    //double ccTangentDir(double xCenter, double yCenter){
+    double ccTangentDir(){
+        double xCenter = 0;
+        double yCenter = 0;
+
         double directionFromCenter = Math.atan2(offset.y - yCenter, offset.x - xCenter);
         return directionFromCenter + Math.PI/2;
     }
@@ -86,13 +90,13 @@ public abstract class OdometryWheel {
     double odoDeltaToBotAngle(double deltaPosition, double xCenter, double yCenter){
         double arclength = distanceTraveledTowardsAngle(
                 deltaPosition,
-                ccTangentDir(xCenter, yCenter));
+                ccTangentDir());
         return arclengthToAngle(arclength, xCenter, yCenter);
     }
 
     double robotAngleToOdoDelta(double angle, double xCenter, double yCenter){
         double arclength = angleToArclength(angle, xCenter, yCenter);
-        return dotProduct(arclength, ccTangentDir(xCenter, yCenter));
+        return dotProduct(arclength, ccTangentDir());
     }
 
     double cos(double v){

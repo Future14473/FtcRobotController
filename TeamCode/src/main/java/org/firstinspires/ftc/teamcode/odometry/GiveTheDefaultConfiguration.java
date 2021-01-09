@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GiveTheDefaultConfiguration {
-    public static pose horoOffset = new pose(17.0,-19.0,Math.PI/2);
-    public static pose vertOffset = new pose(-18.0,9.1, Math.PI);
+    public static pose horoOffset = new pose(-19,-10,Math.PI);
+    public static pose vertOffset = new pose(17.5,6.5, -Math.PI/2.0);
 
     public static RotationOdometry rotationOdometryConfig(HardwareMap hardwareMap, IMU imu, Telemetry telemetry){
         DcMotor horizontal = hardwareMap.get(DcMotor.class, "taco");
@@ -34,13 +34,16 @@ public class GiveTheDefaultConfiguration {
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
 
-
+        //do not change the order
         odometryWheels.add(horizontalOdo);
         odometryWheels.add(verticalOdo);
 
         // odometry system
         pose initial = new pose(ImportPath.origin.x,ImportPath.origin.y,ImportPath.origin.dir);
-        return new RotationOdometry(initial, imu, odometryWheels);
+        RotationOdometry ro = new RotationOdometry(initial, imu, odometryWheels);
+        ro.horoWheel = horizontalOdo;
+        ro.vertWheel = verticalOdo;
+        return ro;
     }
 
     public static Odometry defaultConfiguration(HardwareMap hardwareMap, IMU imu, Telemetry telemetry){
