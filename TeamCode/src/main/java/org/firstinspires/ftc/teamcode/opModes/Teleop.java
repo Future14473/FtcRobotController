@@ -4,14 +4,15 @@ package org.firstinspires.ftc.teamcode.opModes;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
+import org.firstinspires.ftc.teamcode.movement.Wobble_Arm;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 
 
@@ -26,8 +27,9 @@ public class Teleop extends LinearOpMode
     DcMotor taco;
     DcMotor shooter_adjuster;
     DcMotor shooter;
-    Servo wobble_angler;
-    CRServo shooter_roller;
+    CRServo shooter_roller1;
+    CRServo shooter_roller2;
+    Wobble_Arm wobble_arm;
     IMU imu;
 
     public void runOpMode() throws InterruptedException {
@@ -35,11 +37,16 @@ public class Teleop extends LinearOpMode
         imu = new IMU(hardwareMap, telemetry);
 
         MecanumDrive = new Mecanum(hardwareMap);
-
         intake = hardwareMap.get(DcMotor.class, "intake");
         taco = hardwareMap.get(DcMotor.class, "taco");
-        wobble_angler = hardwareMap.get(Servo.class, "wobble_angler");
-        shooter_roller = hardwareMap.get(CRServo.class, "shooter_roller");
+
+
+        wobble_arm = new Wobble_Arm(hardwareMap);
+
+        shooter_roller1 = hardwareMap.get(CRServo.class, "shooter_roller1");
+        shooter_roller2 = hardwareMap.get(CRServo.class, "shooter_roller2");
+        shooter_roller2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         shooter = hardwareMap.get(DcMotor.class, "shooter");
         shooter_adjuster = hardwareMap.get(DcMotor.class, "shooter_adjuster");
         shooter_adjuster.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,7 +78,8 @@ public class Teleop extends LinearOpMode
         intake.setPower(-(intakeIn + intakeOut));
         taco.setPower((intakeIn + intakeOut));
 
-        shooter_roller.setPower((gamepad1.x?1:0) - (gamepad1.y?1:0));
+        shooter_roller1.setPower((gamepad1.x?1:0) - (gamepad1.y?1:0));
+        shooter_roller2.setPower((gamepad1.x?1:0) - (gamepad1.y?1:0));
 
 //        shooter_roller.setPower(1);
         // shooter adjuster
@@ -87,17 +95,21 @@ public class Teleop extends LinearOpMode
 //        }
 
         if (gamepad1.a){
-            wobble_angler.setPosition(0.2);
+            wobble_arm.down();
+            telemetry.addData("arm", "down");
         }
         if (gamepad1.b){
-            wobble_angler.setPosition(0.5);
+            wobble_arm.releaseWobble();
+            telemetry.addData("release ", "wobble");
+        }
+        if (gamepad1.right_bumper){
+            telemetry.addData("pressed bumbper", true);
+            wobble_arm.grab();
         }
 
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Shooter Adjuster: ", shooter_adjuster.getCurrentPosition());
-        telemetry.addData("Shooter_roller ", shooter_roller.getPower());
-        Log.e("Shooter Adjuster: ", String.valueOf( shooter_adjuster.getCurrentPosition()));
-        telemetry.addData("Trigger Right: ", intakeIn);
+
+        telemetry.addData("intake power", intakeIn);
+//        telemetry.addData("Wobble_Adjuster_position", wobble_angler.getPosition());
         telemetry.update();
     }
 
