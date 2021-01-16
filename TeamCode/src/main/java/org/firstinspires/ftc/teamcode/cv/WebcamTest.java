@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.imu.IMU;
-import org.firstinspires.ftc.teamcode.movement.Mecanum;
+import org.firstinspires.ftc.teamcode.zArchive.imu.IMU;
+import org.firstinspires.ftc.teamcode.robotParts.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.GiveTheDefaultConfiguration;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
 
@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import static org.firstinspires.ftc.teamcode.utility.Timing.delay;
+import static org.firstinspires.ftc.teamcode.zArchive.utility.Timing.delay;
 
 @Autonomous(name = "WebcamTest", group = "Auto")
 public class WebcamTest extends LinearOpMode {

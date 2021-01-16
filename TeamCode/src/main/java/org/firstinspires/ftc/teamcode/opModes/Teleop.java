@@ -1,19 +1,16 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.imu.IMU;
-import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.movement.Wobble_Arm;
-import org.firstinspires.ftc.teamcode.utility.RotationUtil;
+import org.firstinspires.ftc.teamcode.zArchive.imu.IMU;
+import org.firstinspires.ftc.teamcode.robotParts.Mecanum;
+import org.firstinspires.ftc.teamcode.robotParts.Wobble_Arm;
+import org.firstinspires.ftc.teamcode.zArchive.utility.RotationUtil;
 
 
 @TeleOp(name="Teleop", group="Teleop")
